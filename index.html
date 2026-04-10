@@ -9,18 +9,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body class="loading">
-    <div id="loader">
+    <div id="loader" class="loader">
         <div class="loader-content">
-            <div class="loader-percent">00</div>
-            <div class="loader-text">Cargando Experiencia</div>
+            <div class="loader-progress-container">
+                <div class="loader-progress"></div>
+            </div>
+            <div class="loader-text">
+                <span class="loader-percent">00</span>
+                <span class="loader-msg">Loading Vision</span>
+            </div>
         </div>
-        <div class="loader-progress"></div>
     </div>
 
     <div id="app">
-        <canvas id="canvas-webgl"></canvas>
         
         <header>
             <nav>
@@ -42,6 +48,9 @@
 
         <main>
             <section class="hero">
+                <div class="hero-image-container reveal">
+                    <img src="hero_antonella.png" alt="Antonella Dimenza" class="hero-image">
+                </div>
                 <div class="hero-content">
                     <h1 class="split-text">ANTONELLA / DIMENZA</h1>
                     <p class="hero-subtext">Modelo de Alta Costura especializada en campañas Editoriales, de Pasarela y Comerciales en todo el mundo.</p>
@@ -52,24 +61,95 @@
                 </div>
             </section>
 
-            <section class="portfolio">
-                <div class="portfolio-header">
-                    <h2>Proyectos Seleccionados</h2>
-                </div>
-                <div class="project-grid">
-                    <div class="project-card">
-                        <img src="project_1.png" alt="Moda Editorial" class="project-image">
-                        <div class="project-info">
-                            <h3>Editorial Vogue</h3>
-                            <p>Fotografía / Estilo</p>
+            <section class="about-stitch">
+                <canvas id="about-canvas"></canvas>
+                <div class="about-content-layer">
+                    <div class="about-header-main">
+                        <h2 class="ultra-title reveal">QUIEN</h2>
+                        <h2 class="ultra-title outline hide-mobile reveal">SOY?</h2>
+                    </div>
+
+                    <div class="about-grid-layout">
+                        <div class="about-media-staggered">
+                            <div class="media-box pos-1 reveal"><img src="ab1.png" alt="Profile"></div>
+                            <div class="media-box pos-2 reveal"><img src="ab2.png" alt="Dynamic"></div>
+                            <div class="media-box pos-3 reveal"><img src="ab3.png" alt="Artistic"></div>
+                        </div>
+
+                        <div class="about-text-content">
+                            <div class="about-info-block reveal">
+                                <span class="info-num">01.</span>
+                                <h3>Misión & Filosofía</h3>
+                                <p>Antonella Dimenza encarna la intersección entre la estética clásica y la provocación moderna. Cada campaña es una exploración de la forma, la luz y la identidad.</p>
+                            </div>
+                            <div class="about-info-block reveal">
+                                <span class="info-num">02.</span>
+                                <h3>Trayectoria Global</h3>
+                                <p>Con base en Milán y presencia en las principales pasarelas de París y Nueva York, Antonella colabora con directores creativos para elevar narrativas visuales.</p>
+                            </div>
+                            <a href="#" class="btn-archive reveal">Ver Archivo / 2026</a>
                         </div>
                     </div>
-                    <div class="project-card">
-                        <img src="project_2.png" alt="Desfile de Moda" class="project-image">
-                        <div class="project-info">
-                            <h3>Milan Fashion Week</h3>
-                            <p>Pasarela / SS26</p>
+
+                    <div class="about-footer-meta">
+                        <div class="meta-item">45.4642° N, 9.1900° E</div>
+                        <div class="meta-item">EDITORIAL / MILAN / SS26</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats">
+                <div class="stats-layout">
+                    <div class="stats-image-container reveal">
+                        <img src="stats_portrait.png" alt="Portrait" class="stats-image">
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span class="stat-label">Altura</span>
+                            <span class="stat-value">178 cm / 5'10"</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Busto</span>
+                            <span class="stat-value">84 cm / 33"</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Cintura</span>
+                            <span class="stat-value">60 cm / 23.5"</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Cadera</span>
+                            <span class="stat-value">89 cm / 35"</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Calzado</span>
+                            <span class="stat-value">39 EU / 8 US</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Ojos</span>
+                            <span class="stat-value">Verdes</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Cabello</span>
+                            <span class="stat-value">Castaño</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="gallery">
+                <div class="gallery-container">
+                    <div class="gallery-item large">
+                        <img src="f1.png" alt="Editorial 1">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="f2.png" alt="Editorial 2">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="f3.png" alt="Runway">
+                    </div>
+                    <div class="gallery-item tall">
+                        <img src="f4.png" alt="Commercial">
                     </div>
                 </div>
             </section>
@@ -79,33 +159,73 @@
                     <h2>Perfil Profesional</h2>
                 </div>
                 <div class="services-list">
-                    <div class="service-item">
+                    <div class="service-item" data-image="s-editorial.png">
                         <span class="service-num">01</span>
                         <div class="service-title">
                             <h3>Editorial de Alta Costura</h3>
                             <p>Narrativas sofisticadas a través de fotografía de vanguardia.</p>
                         </div>
+                        <div class="service-hover-image">
+                            <img src="s-editorial.png" alt="Editorial Preview">
+                        </div>
                     </div>
-                    <div class="service-item">
+                    <div class="service-item" data-image="s-runway.png">
                         <span class="service-num">02</span>
                         <div class="service-title">
                             <h3>Pasarela & Catwalk</h3>
                             <p>Representación profesional para marcas y diseñadores globales.</p>
                         </div>
+                        <div class="service-hover-image">
+                            <img src="s-runway.png" alt="Runway Preview">
+                        </div>
                     </div>
-                    <div class="service-item">
+                    <div class="service-item" data-image="s-commercial.png">
                         <span class="service-num">03</span>
                         <div class="service-title">
                             <h3>Campañas Comerciales</h3>
                             <p>Presencia visual de alto impacto para marcas y medios digitales.</p>
                         </div>
+                        <div class="service-hover-image">
+                            <img src="s-commercial.png" alt="Commercial Preview">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="clients">
+                <div class="marquee">
+                    <div class="marquee-content">
+                        <span>CHANEL</span>
+                        <span>DIOR</span>
+                        <span>VOGUE</span>
+                        <span>PRADA</span>
+                        <span>GUCCI</span>
+                        <span>VERSACE</span>
+                        <span>BALENCIAGA</span>
+                        <span>LOUIS VUITTON</span>
+                        <!-- Repeat for smooth scroll -->
+                        <span>CHANEL</span>
+                        <span>DIOR</span>
+                        <span>VOGUE</span>
+                        <span>PRADA</span>
+                        <span>GUCCI</span>
+                        <span>VERSACE</span>
+                        <span>BALENCIAGA</span>
+                        <span>LOUIS VUITTON</span>
                     </div>
                 </div>
             </section>
 
             <section class="contact">
-                <h2>Lista para la <br> próxima campaña.</h2>
-                <a href="mailto:booking@antonelladimenza.com" class="contact-link">Contrataciones & Consultas</a>
+                <div class="contact-layout">
+                    <div class="contact-text">
+                        <h2>Lista para la <br> próxima campaña.</h2>
+                        <a href="mailto:booking@antonelladimenza.com" class="contact-link">Contrataciones & Consultas</a>
+                    </div>
+                    <div class="contact-image-container reveal">
+                        <img src="contact_model.png" alt="Contact Antonella" class="contact-image">
+                    </div>
+                </div>
             </section>
         </main>
 
