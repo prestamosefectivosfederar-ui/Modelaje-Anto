@@ -1,104 +1,19 @@
-// Antonella Portfolio - Lusion.co Portrait Particle System
-class Particle {
-    constructor() {
-        this.x = 0;
-        this.y = 0;
-        this.vx = 0;
-        this.vy = 0;
-        this.targetX = 0;
-        this.targetY = 0;
-        // Randomize color: white, cold-blue, cyan
-        const t = Math.random();
-        const a = 0.55 + Math.random() * 0.45;
-        if (t < 0.45) {
-            const v = 210 + Math.floor(Math.random() * 45);
-            this.color = `rgba(${v},${v},255,${a})`;
-        } else if (t < 0.75) {
-            this.color = `rgba(120,210,255,${a})`;
-        } else {
-            this.color = `rgba(255,255,255,${a})`;
-        }
-        this.r = 1.2 + Math.random() * 1.4;
-    }
-
-    setTarget(tx, ty, cw, ch) {
-        this.targetX = tx;
-        this.targetY = ty;
-        // Scatter from a random position so particles fly into formation
-        this.x = Math.random() * cw;
-        this.y = Math.random() * ch;
-        this.vx = 0;
-        this.vy = 0;
-    }
-
-    update(noiseX, noiseY, mouseX, mouseY) {
-        // Strong spring toward target — this is what forms the face
-        this.vx += (this.targetX - this.x) * 0.09;
-        this.vy += (this.targetY - this.y) * 0.09;
-
-        // Tiny organic noise so particles breathe slightly
-        this.vx += noiseX * 0.4;
-        this.vy += noiseY * 0.4;
-
-        // Mouse repulsion — face explodes on hover
-        if (mouseX !== null) {
-            const dx = this.x - mouseX;
-            const dy = this.y - mouseY;
-            const distSq = dx * dx + dy * dy;
-            const R = 190;
-            if (distSq < R * R && distSq > 0) {
-                const dist = Math.sqrt(distSq);
-                const f = (1 - dist / R) * 9.0;
-                this.vx += (dx / dist) * f * 0.18;
-                this.vy += (dy / dist) * f * 0.18;
-            }
-        }
-
-        // Heavy damping: particles settle fast
-        this.vx *= 0.82;
-        this.vy *= 0.82;
-        this.x += this.vx;
-        this.y += this.vy;
-    }
-
-    draw(ctx) {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
+// Antonella Portfolio - Lusion.co Style Experience
+// Resilient Version - Handling external libraries gracefully
 
 class AntonellaApp {
     constructor() {
-        this.initLenis();
+        console.log('AntonellaApp: Initializing...');
         this.initLoader();
-        this.initGSAP();
-        this.initInteractive();
-        this.initAboutCanvas();
-    }
-
-    initLenis() {
-        this.lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical',
-            gestureDirection: 'vertical',
-            smoothWheel: true,
-            wheelMultiplier: 1,
-            smoothTouch: false,
-            touchMultiplier: 2,
-            infinite: false,
-        });
-
-        function raf(time) {
-            this.lenis.raf(time);
-            requestAnimationFrame(raf.bind(this));
-        }
-        requestAnimationFrame(raf.bind(this));
-
-        // Sync scrollTrigger with Lenis
-        this.lenis.on('scroll', ScrollTrigger.update);
+        
+        // Use a small delay to ensure CDNs are parsed
+        setTimeout(() => {
+            this.tryInitLenis();
+            this.initGSAP();
+            this.initInteractive();
+            this.tryInitStatsParticles();
+            this.initFilmGrain();
+        }, 100);
     }
 
     initLoader() {
@@ -108,7 +23,7 @@ class AntonellaApp {
         let percentage = 0;
 
         const interval = setInterval(() => {
-            percentage += Math.floor(Math.random() * 10) + 1;
+            percentage += Math.floor(Math.random() * 20) + 10;
             if (percentage >= 100) {
                 percentage = 100;
                 clearInterval(interval);
@@ -117,362 +32,196 @@ class AntonellaApp {
             if (loaderPercent) loaderPercent.innerText = percentage.toString().padStart(2, '0');
             if (loaderProgress) loaderProgress.style.width = percentage + '%';
         }, 30);
+
+        // Ultimate Fail-safe: Hide loader after 3s no matter what
+        setTimeout(() => {
+            if (document.body.classList.contains('loading')) {
+                console.warn('AntonellaApp: Failsafe triggered.');
+                this.revealPage(loader);
+            }
+        }, 3000);
     }
 
     revealPage(loader) {
-        gsap.to(loader, {
-            yPercent: -100,
-            duration: 1.5,
-            ease: "expo.inOut",
-            onComplete: () => {
-                document.body.classList.remove('loading');
-                loader.style.display = 'none';
-                this.animateHero();
+        if (!loader) {
+            document.body.classList.remove('loading');
+            return;
+        }
+        
+        if (typeof gsap !== 'undefined') {
+            gsap.to(loader, {
+                yPercent: -100,
+                duration: 1,
+                ease: "expo.inOut",
+                onComplete: () => {
+                    document.body.classList.remove('loading');
+                    loader.style.display = 'none';
+                    this.animateHero();
+                }
+            });
+        } else {
+            document.body.classList.remove('loading');
+            loader.style.display = 'none';
+        }
+    }
+
+    tryInitLenis() {
+        try {
+            if (typeof Lenis !== 'undefined') {
+                this.lenis = new Lenis({
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    smoothWheel: true,
+                });
+                const raf = (time) => {
+                    this.lenis.raf(time);
+                    requestAnimationFrame(raf);
+                }
+                requestAnimationFrame(raf);
+                if (typeof ScrollTrigger !== 'undefined') {
+                    this.lenis.on('scroll', ScrollTrigger.update);
+                }
             }
-        });
+        } catch (e) { console.error(e); }
+    }
+
+    initFilmGrain() {
+        const patternCanvas = document.createElement('canvas');
+        patternCanvas.width = 256;
+        patternCanvas.height = 256;
+        const pCtx = patternCanvas.getContext('2d');
+
+        const overlay = document.createElement('canvas');
+        overlay.style.cssText = [
+            'position:fixed', 'inset:0', 'width:100%', 'height:100%',
+            'pointer-events:none', 'z-index:9999',
+            'mix-blend-mode:screen', 'opacity:0.05'
+        ].join(';');
+        document.body.appendChild(overlay);
+        const ctx = overlay.getContext('2d');
+
+        const resize = () => {
+            overlay.width = window.innerWidth;
+            overlay.height = window.innerHeight;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        let tick = 0;
+        const render = () => {
+            requestAnimationFrame(render);
+            if (++tick % 2 !== 0) return;
+
+            const imgData = pCtx.createImageData(256, 256);
+            const d = imgData.data;
+            for (let i = 0; i < d.length; i += 4) {
+                const v = Math.random() * 255;
+                d[i] = d[i + 1] = d[i + 2] = v;
+                d[i + 3] = 18;
+            }
+            pCtx.putImageData(imgData, 0, 0);
+
+            const pattern = ctx.createPattern(patternCanvas, 'repeat');
+            ctx.clearRect(0, 0, overlay.width, overlay.height);
+            ctx.fillStyle = pattern;
+            ctx.fillRect(0, 0, overlay.width, overlay.height);
+        };
+        render();
     }
 
     animateHero() {
-        const heroSub = document.querySelector('.hero-subtext');
-        const heroImg = document.querySelector('.hero-image-container');
-
+        if (typeof gsap === 'undefined') return;
         const tl = gsap.timeline();
-        
-        tl.from(heroImg, {
-            scale: 1.2,
-            filter: "blur(20px)",
-            duration: 2,
-            ease: "expo.out"
-        }, 0);
-
-        tl.from(".split-text", {
-            y: 100,
-            opacity: 0,
-            duration: 1,
-            ease: "power4.out"
-        }, 0.5);
-
-        tl.from(heroSub, {
-            y: 20,
-            opacity: 0,
-            duration: 1,
-            ease: "power3.out"
-        }, 1);
+        // Ensure elements are visible by using fromTo
+        tl.fromTo(".hero-image-container", { scale: 1.2, opacity: 0 }, { scale: 1, opacity: 0.3, duration: 2, ease: "expo.out" }, 0);
+        tl.fromTo(".clipped-title", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, 0.5);
+        tl.fromTo(".hero-subtext", { y: 20, opacity: 0 }, { y: 0, opacity: 0.7, duration: 1, ease: "power3.out" }, 1);
     }
 
     initGSAP() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
         gsap.registerPlugin(ScrollTrigger);
 
-        // Image Parallax & Reveal Effect
-        const sections = document.querySelectorAll('section');
-        
-        sections.forEach(section => {
-            const images = section.querySelectorAll('img');
-            
-            images.forEach(img => {
-                // Wrap image in a container if it's not already
-                const parent = img.parentElement;
-                
-                gsap.fromTo(img, 
-                    { y: -50, scale: 1.1 }, 
-                    { 
-                        y: 50, 
-                        scale: 1,
-                        ease: "none",
-                        scrollTrigger: {
-                            trigger: parent,
-                            start: "top bottom",
-                            end: "bottom top",
-                            scrub: true
-                        }
-                    }
-                );
-            });
+        // Standard Reveals - Fixed to use fromTo so they don't stay at opacity 0
+        document.querySelectorAll('.reveal').forEach(el => {
+            gsap.fromTo(el, 
+                { y: 30, opacity: 0 }, 
+                {
+                    scrollTrigger: {
+                        trigger: el,
+                        start: "top 90%",
+                    },
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: "power2.out",
+                    overwrite: "auto"
+                }
+            );
         });
 
-        // Text Scramble / Character Reveal (Simplified for basic text)
-        const revealTexts = document.querySelectorAll('.ultra-title, .about-info-block h3, .stat-value');
-        revealTexts.forEach(text => {
-            gsap.from(text, {
-                scrollTrigger: {
-                    trigger: text,
-                    start: "top 90%",
-                },
-                y: 100,
-                opacity: 0,
-                duration: 1.5,
-                ease: "expo.out"
-            });
+        // Parallax Effect
+        document.querySelectorAll('.hero-image, .stats-image, .gallery-item img, .media-box img, .contact-image, .floating-portrait img').forEach(img => {
+            gsap.fromTo(img, 
+                { y: "-15%" }, 
+                { 
+                    y: "15%", 
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: img.parentElement,
+                        start: "top bottom",
+                        end: "bottom top",
+                        scrub: true
+                    }
+                }
+            );
         });
     }
 
     initInteractive() {
         const cursor = document.querySelector('.cursor');
-        const links = document.querySelectorAll('a, button, .gallery-item, .media-box, .btn-archive');
-
+        if (!cursor) return;
         window.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, {
-                x: e.clientX,
-                y: e.clientY,
-                duration: 0.2,
-                ease: "power2.out"
-            });
+            if (typeof gsap !== 'undefined') {
+                gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            }
         });
-
-        links.forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                gsap.to(cursor, { 
-                    scale: 6, 
-                    backgroundColor: "rgba(255,255,255,0.1)", 
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    mixBlendMode: "difference",
-                    duration: 0.3 
-                });
-            });
-            link.addEventListener('mouseleave', () => {
-                gsap.to(cursor, { 
-                    scale: 1, 
-                    backgroundColor: "white", 
-                    border: "none",
-                    mixBlendMode: "normal",
-                    duration: 0.3 
-                });
-            });
+        document.querySelectorAll('a, button, .gallery-item, .media-box').forEach(link => {
+            link.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(5)');
+            link.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
         });
-
-        // Marquee Smooth Speed Control
-        const marquee = document.querySelector('.marquee-content');
-        if (marquee) {
-            this.lenis.on('scroll', (e) => {
-                const speed = 1 + Math.abs(e.velocity) * 0.05;
-                gsap.to(marquee, { timeScale: speed, duration: 0.5 });
-            });
-        }
     }
 
-    initAboutCanvas() {
-        const section = document.querySelector('.about-stitch');
-        const canvas = document.getElementById('about-canvas');
-        if (!canvas || !section) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        // ~2500 particles, all forming the face
-        const PARTICLE_COUNT = 2500;
-        // Noise grid for organic breathing
-        const CELL = 30;
-
-        let particles = [];
-        let noiseField = []; // {nx, ny} per cell — tiny displacement vectors
-        let mouseX = null;
-        let mouseY = null;
-        let rafId = null;
-        let frameCount = 0;
-        let cols = 0;
-        let rows = 0;
-        let sectionRect = null;
-        let portraitImg = null;
-
-        // --- Noise field (slow-drifting displacement vectors) ---
-        const buildNoise = () => {
-            const t = frameCount * 0.0008;
-            for (let r = 0; r < rows; r++) {
-                if (!noiseField[r]) noiseField[r] = [];
-                for (let c = 0; c < cols; c++) {
-                    const a = Math.sin(c * 0.15 + t) * Math.cos(r * 0.15 + t * 0.6) * Math.PI * 2;
-                    noiseField[r][c] = { nx: Math.cos(a) * 0.012, ny: Math.sin(a) * 0.012 };
-                }
-            }
-        };
-
-        // --- Fallback: distribute particles in a portrait-shaped oval ---
-        const assignOvalFallback = () => {
-            const cx = canvas.width * 0.5;
-            const cy = canvas.height * 0.38;
-            const rx = canvas.width  * 0.18;
-            const ry = canvas.height * 0.32;
-            particles.forEach(p => {
-                const angle = Math.random() * Math.PI * 2;
-                const r = Math.sqrt(Math.random());
-                p.setTarget(
-                    cx + Math.cos(angle) * rx * r,
-                    cy + Math.sin(angle) * ry * r,
-                    canvas.width, canvas.height
-                );
-            });
-            console.warn('[portrait] Using oval fallback — serve from localhost to enable pixel sampling.');
-        };
-
-        // --- Sample image → assign one feature point per particle ---
-        const assignFromImage = (img) => {
-            const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * 0.88;
-            const dw = img.width  * scale;
-            const dh = img.height * scale;
-            const dx = (canvas.width  - dw) / 2;
-            const dy = (canvas.height - dh) / 2;
-
-            const SW = Math.round(Math.min(dw, 500));
-            const SH = Math.round(Math.min(dh, 700));
-            const off = document.createElement('canvas');
-            off.width = SW; off.height = SH;
-            const oCtx = off.getContext('2d');
-            oCtx.drawImage(img, 0, 0, SW, SH);
-
-            let data;
-            try {
-                data = oCtx.getImageData(0, 0, SW, SH).data;
-            } catch (e) {
-                // SecurityError on file:// — use fallback
-                console.warn('[portrait] getImageData blocked (file:// protocol?). Using oval fallback.', e);
-                assignOvalFallback();
-                return;
-            }
-
-            const candidates = [];
-            const step = 3;
-            for (let y = 0; y < SH; y += step) {
-                for (let x = 0; x < SW; x += step) {
-                    const i = (y * SW + x) * 4;
-                    const lum = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-                    if (lum > 35) {
-                        candidates.push({
-                            x: dx + (x / SW) * dw,
-                            y: dy + (y / SH) * dh,
-                            w: lum
-                        });
-                    }
-                }
-            }
-
-            if (candidates.length < 10) {
-                console.warn('[portrait] Not enough bright pixels — using oval fallback.');
-                assignOvalFallback();
-                return;
-            }
-
-            const pool = [];
-            const maxW = Math.max(...candidates.map(c => c.w));
-            for (const c of candidates) {
-                const reps = Math.max(1, Math.round((c.w / maxW) * 4));
-                for (let k = 0; k < reps; k++) pool.push(c);
-            }
-
-            particles.forEach(p => {
-                const fp = pool[Math.floor(Math.random() * pool.length)];
-                p.setTarget(
-                    fp.x + (Math.random() - 0.5) * step * 1.5,
-                    fp.y + (Math.random() - 0.5) * step * 1.5,
-                    canvas.width, canvas.height
-                );
-            });
-            console.log(`[portrait] Sampled ${candidates.length} candidates → ${pool.length} weighted targets.`);
-        };
-
-        // --- Load portrait image (tries candidates in order) ---
-        const PORTRAIT_CANDIDATES = ['about_model.png', 'hero_antonella.png', 'ab1.png', 'stats_portrait.png'];
-        const tryLoadPortrait = (candidates) => {
-            if (candidates.length === 0) {
-                console.warn('[portrait] No portrait image found. Oval fallback permanent.');
-                return;
-            }
-            const img = new Image();
-            img.src = candidates[0];
-            img.onload = () => {
-                console.log(`[portrait] Loaded: ${candidates[0]}`);
-                portraitImg = img;
-                if (particles.length > 0) assignFromImage(img);
+    tryInitStatsParticles() {
+        const canvas = document.querySelector('#particles-stats');
+        if (!canvas || typeof THREE === 'undefined') return;
+        try {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(800 * 3);
+            for(let i=0; i<800*3; i++) pos[i] = (Math.random()-0.5)*12;
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05, transparent: true, opacity: 0.4 });
+            const points = new THREE.Points(geo, mat);
+            scene.add(points);
+            camera.position.z = 6;
+            const anim = () => {
+                requestAnimationFrame(anim);
+                points.rotation.y += 0.001;
+                points.rotation.x += 0.0005;
+                renderer.render(scene, camera);
             };
-            img.onerror = () => {
-                console.warn(`[portrait] ${candidates[0]} failed, trying next...`);
-                tryLoadPortrait(candidates.slice(1));
-            };
-        };
-        tryLoadPortrait(PORTRAIT_CANDIDATES);
-
-        // --- Resize ---
-        const resize = () => {
-            canvas.width  = section.offsetWidth;
-            canvas.height = section.offsetHeight;
-            sectionRect   = section.getBoundingClientRect();
-            cols = Math.ceil(canvas.width  / CELL);
-            rows = Math.ceil(canvas.height / CELL);
-            noiseField = [];
-            buildNoise();
-            particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
-            // Always assign targets after creating particles
-            if (portraitImg) {
-                assignFromImage(portraitImg);
-            } else {
-                assignOvalFallback(); // image not loaded yet — placeholder until it arrives
-            }
-        };
-
-        // --- Render loop ---
-        const loop = () => {
-            rafId = requestAnimationFrame(loop);
-            frameCount = (frameCount + 1) % 180;
-            if (frameCount === 0) buildNoise();
-
-            // Fade trail
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = 'rgba(0,0,0,0.07)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Draw particles with screen blending (glow/bloom)
-            ctx.globalCompositeOperation = 'screen';
-            particles.forEach(p => {
-                const col = Math.min(Math.floor(p.x / CELL), cols - 1);
-                const row = Math.min(Math.floor(p.y / CELL), rows - 1);
-                const n   = (noiseField[row] && noiseField[row][col]) || { nx: 0, ny: 0 };
-                p.update(n.nx, n.ny, mouseX, mouseY);
-                p.draw(ctx);
-            });
-        };
-
-        // Fill canvas black immediately so it doesn't flicker transparent
-        const initCanvas = () => {
-            canvas.width  = section.offsetWidth  || window.innerWidth;
-            canvas.height = section.offsetHeight || window.innerHeight;
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        };
-        initCanvas();
-
-        // --- Mouse ---
-        section.addEventListener('mousemove', (e) => {
-            const r = sectionRect || section.getBoundingClientRect();
-            mouseX = e.clientX - r.left;
-            mouseY = e.clientY - r.top;
-        });
-        section.addEventListener('mouseleave', () => { mouseX = null; mouseY = null; });
-
-        // --- Resize debounce ---
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                resize();
-                sectionRect = section.getBoundingClientRect();
-            }, 200);
-        });
-
-        // --- IntersectionObserver: defer init until section visible ---
-        let initialized = false;
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                if (!initialized) { initialized = true; resize(); }
-                if (!rafId) loop();
-            } else {
-                if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-            }
-        }, { threshold: 0.05 });
-
-        observer.observe(section);
+            anim();
+        } catch (e) { console.error(e); }
     }
 }
 
-// Initializing the Premium Experience
-window.onload = () => {
+// Ensure startup
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new AntonellaApp());
+} else {
     new AntonellaApp();
-};
+}
