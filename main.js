@@ -1,71 +1,70 @@
-// Antonella Portfolio - Lusion.co Style Portrait Particle Effect
+// Antonella Portfolio - Lusion.co Portrait Particle System
 class Particle {
-    constructor(canvasWidth, canvasHeight) {
-        this.cw = canvasWidth;
-        this.ch = canvasHeight;
-        this.targetX = null;
-        this.targetY = null;
-        this.isPortrait = false;
-        this.reset();
-    }
-
-    reset() {
-        this.x = Math.random() * this.cw;
-        this.y = Math.random() * this.ch;
+    constructor() {
+        this.x = 0;
+        this.y = 0;
         this.vx = 0;
         this.vy = 0;
-        this.speed = 0.7 + Math.random() * 0.8;
-        const alpha = 0.5 + Math.random() * 0.4;
-        const rg = 160 + Math.floor(Math.random() * 60);
-        const b = 210 + Math.floor(Math.random() * 45);
-        this.color = `rgba(${rg},${rg + 15},${b},${alpha})`;
+        this.targetX = 0;
+        this.targetY = 0;
+        // Randomize color: white, cold-blue, cyan
+        const t = Math.random();
+        const a = 0.55 + Math.random() * 0.45;
+        if (t < 0.45) {
+            const v = 210 + Math.floor(Math.random() * 45);
+            this.color = `rgba(${v},${v},255,${a})`;
+        } else if (t < 0.75) {
+            this.color = `rgba(120,210,255,${a})`;
+        } else {
+            this.color = `rgba(255,255,255,${a})`;
+        }
+        this.r = 0.7 + Math.random() * 1.1;
     }
 
-    update(flowAngle, mouseX, mouseY) {
-        if (this.isPortrait && this.targetX !== null) {
-            // Spring attraction toward portrait feature point
-            this.vx += (this.targetX - this.x) * 0.004;
-            this.vy += (this.targetY - this.y) * 0.004;
-            // Subtle flow field noise for organic movement
-            this.vx += Math.cos(flowAngle) * 0.015;
-            this.vy += Math.sin(flowAngle) * 0.015;
-        } else {
-            // Ambient particles: full flow field guidance
-            this.vx += Math.cos(flowAngle) * 0.05;
-            this.vy += Math.sin(flowAngle) * 0.05;
-        }
+    setTarget(tx, ty, cw, ch) {
+        this.targetX = tx;
+        this.targetY = ty;
+        // Scatter from a random position so particles fly into formation
+        this.x = Math.random() * cw;
+        this.y = Math.random() * ch;
+        this.vx = 0;
+        this.vy = 0;
+    }
 
-        // Mouse repulsion — stronger for portrait particles so face "explodes"
+    update(noiseX, noiseY, mouseX, mouseY) {
+        // Strong spring toward target — this is what forms the face
+        this.vx += (this.targetX - this.x) * 0.09;
+        this.vy += (this.targetY - this.y) * 0.09;
+
+        // Tiny organic noise so particles breathe slightly
+        this.vx += noiseX * 0.4;
+        this.vy += noiseY * 0.4;
+
+        // Mouse repulsion — face explodes on hover
         if (mouseX !== null) {
             const dx = this.x - mouseX;
             const dy = this.y - mouseY;
             const distSq = dx * dx + dy * dy;
-            const radius = 160;
-            if (distSq < radius * radius && distSq > 0) {
+            const R = 190;
+            if (distSq < R * R && distSq > 0) {
                 const dist = Math.sqrt(distSq);
-                const force = (1 - dist / radius) * (this.isPortrait ? 5.0 : 3.0);
-                this.vx += (dx / dist) * force * 0.12;
-                this.vy += (dy / dist) * force * 0.12;
+                const f = (1 - dist / R) * 9.0;
+                this.vx += (dx / dist) * f * 0.18;
+                this.vy += (dy / dist) * f * 0.18;
             }
         }
 
-        this.vx *= 0.94;
-        this.vy *= 0.94;
-        this.x += this.vx * this.speed;
-        this.y += this.vy * this.speed;
-
-        // Portrait particles spring back; ambient ones reset when out of bounds
-        if (!this.isPortrait) {
-            if (this.x < -5 || this.x > this.cw + 5 || this.y < -5 || this.y > this.ch + 5) {
-                this.reset();
-            }
-        }
+        // Heavy damping: particles settle fast
+        this.vx *= 0.82;
+        this.vy *= 0.82;
+        this.x += this.vx;
+        this.y += this.vy;
     }
 
     draw(ctx) {
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.isPortrait ? 1.4 : 1.0, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
         ctx.fill();
     }
 }
@@ -134,7 +133,6 @@ class AntonellaApp {
     }
 
     animateHero() {
-        const heroTitle = document.querySelector('.split-text');
         const heroSub = document.querySelector('.hero-subtext');
         const heroImg = document.querySelector('.hero-image-container');
 
@@ -256,19 +254,16 @@ class AntonellaApp {
         const section = document.querySelector('.about-stitch');
         const canvas = document.getElementById('about-canvas');
         if (!canvas || !section) return;
-
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        const PARTICLE_COUNT = 1200;
-        const CELL_SIZE = 20;
-        const PORTRAIT_RATIO = 0.72; // 72% of particles form the portrait
+        // ~2500 particles, all forming the face
+        const PARTICLE_COUNT = 2500;
+        // Noise grid for organic breathing
+        const CELL = 30;
 
         let particles = [];
-        let flowField = [];
-        let featurePoints = [];
-        let portraitImg = null;
-        let imgDrawParams = null; // cached draw coords for the portrait
+        let noiseField = []; // {nx, ny} per cell — tiny displacement vectors
         let mouseX = null;
         let mouseY = null;
         let rafId = null;
@@ -276,140 +271,126 @@ class AntonellaApp {
         let cols = 0;
         let rows = 0;
         let sectionRect = null;
+        let portraitImg = null;
 
-        // --- Image sampling ---
-        const samplePortrait = (img) => {
-            // Build an offscreen canvas at reduced resolution for sampling
-            const SW = 400;
-            const SH = Math.round(SW * (img.height / img.width));
+        // --- Noise field (slow-drifting displacement vectors) ---
+        const buildNoise = () => {
+            const t = frameCount * 0.0008;
+            for (let r = 0; r < rows; r++) {
+                if (!noiseField[r]) noiseField[r] = [];
+                for (let c = 0; c < cols; c++) {
+                    const a = Math.sin(c * 0.15 + t) * Math.cos(r * 0.15 + t * 0.6) * Math.PI * 2;
+                    noiseField[r][c] = { nx: Math.cos(a) * 0.012, ny: Math.sin(a) * 0.012 };
+                }
+            }
+        };
+
+        // --- Sample image → assign one feature point per particle ---
+        const assignFromImage = (img) => {
+            // Offscreen canvas: fit image to canvas width, centered vertically
+            const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * 0.9;
+            const dw = img.width * scale;
+            const dh = img.height * scale;
+            const dx = (canvas.width - dw) / 2;
+            const dy = (canvas.height - dh) / 2;
+
+            // Sample at reduced size for speed
+            const SW = Math.round(dw);
+            const SH = Math.round(dh);
             const off = document.createElement('canvas');
-            off.width = SW;
-            off.height = SH;
+            off.width = SW; off.height = SH;
             const oCtx = off.getContext('2d');
             oCtx.drawImage(img, 0, 0, SW, SH);
             const data = oCtx.getImageData(0, 0, SW, SH).data;
 
-            // Scale sample coords to real canvas coords (image is centered, cover-height)
-            const scale = canvas.height / img.height;
-            const dw = img.width * scale;
-            const dx = (canvas.width - dw) / 2;
-            imgDrawParams = { dx, dy: 0, dw, dh: canvas.height };
-
-            featurePoints = [];
-            const step = 4;
+            // Collect all bright pixels as candidate targets (weighted by luminance)
+            const candidates = [];
+            const step = 3;
             for (let y = 0; y < SH; y += step) {
                 for (let x = 0; x < SW; x += step) {
                     const i = (y * SW + x) * 4;
-                    // Luminance
                     const lum = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-                    if (lum > 50) {
-                        // Map sample coords → canvas coords
-                        featurePoints.push({
+                    if (lum > 40) {
+                        // Convert to canvas coords
+                        candidates.push({
                             x: dx + (x / SW) * dw,
-                            y: (y / SH) * canvas.height,
-                            w: lum / 255
+                            y: dy + (y / SH) * dh,
+                            w: lum
                         });
                     }
                 }
             }
+            if (candidates.length === 0) return;
 
-            assignPortraitParticles();
-        };
+            // Build weighted pool: brighter pixels appear more often
+            // so particles concentrate on highlights (eyes, skin, hair edges)
+            const pool = [];
+            const maxW = Math.max(...candidates.map(c => c.w));
+            for (const c of candidates) {
+                const reps = Math.max(1, Math.round((c.w / maxW) * 4));
+                for (let k = 0; k < reps; k++) pool.push(c);
+            }
 
-        const assignPortraitParticles = () => {
-            if (featurePoints.length === 0) return;
-            const portraitCount = Math.floor(PARTICLE_COUNT * PORTRAIT_RATIO);
-            particles.forEach((p, i) => {
-                if (i < portraitCount) {
-                    const fp = featurePoints[Math.floor(Math.random() * featurePoints.length)];
-                    p.isPortrait = true;
-                    p.targetX = fp.x + (Math.random() - 0.5) * 6;
-                    p.targetY = fp.y + (Math.random() - 0.5) * 6;
-                    // Start scattered, spring into position
-                    p.x = fp.x + (Math.random() - 0.5) * canvas.width * 0.6;
-                    p.y = fp.y + (Math.random() - 0.5) * canvas.height * 0.4;
-                } else {
-                    p.isPortrait = false;
-                    p.targetX = null;
-                    p.targetY = null;
-                }
+            // Assign each particle a random target from weighted pool
+            particles.forEach(p => {
+                const fp = pool[Math.floor(Math.random() * pool.length)];
+                p.setTarget(
+                    fp.x + (Math.random() - 0.5) * step * 1.5,
+                    fp.y + (Math.random() - 0.5) * step * 1.5,
+                    canvas.width, canvas.height
+                );
             });
         };
 
-        // --- Load portrait ---
+        // --- Load portrait image ---
         const img = new Image();
         img.src = 'about_model.png';
         img.onload = () => {
             portraitImg = img;
-            if (particles.length > 0) samplePortrait(img);
-        };
-
-        // --- Flow field ---
-        const buildFlowField = () => {
-            const t = frameCount * 0.001;
-            for (let r = 0; r < rows; r++) {
-                if (!flowField[r]) flowField[r] = new Float32Array(cols);
-                for (let c = 0; c < cols; c++) {
-                    flowField[r][c] =
-                        Math.sin(c * 0.1 + t) *
-                        Math.cos(r * 0.1 + t * 0.7) *
-                        Math.PI * 4;
-                }
-            }
+            if (particles.length > 0) assignFromImage(img);
         };
 
         // --- Resize ---
         const resize = () => {
-            canvas.width = section.offsetWidth;
+            canvas.width  = section.offsetWidth;
             canvas.height = section.offsetHeight;
-            sectionRect = section.getBoundingClientRect();
-            cols = Math.ceil(canvas.width / CELL_SIZE);
-            rows = Math.ceil(canvas.height / CELL_SIZE);
-            flowField = [];
-            buildFlowField();
-            particles = Array.from(
-                { length: PARTICLE_COUNT },
-                () => new Particle(canvas.width, canvas.height)
-            );
-            if (portraitImg) samplePortrait(portraitImg);
+            sectionRect   = section.getBoundingClientRect();
+            cols = Math.ceil(canvas.width  / CELL);
+            rows = Math.ceil(canvas.height / CELL);
+            noiseField = [];
+            buildNoise();
+            particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
+            if (portraitImg) assignFromImage(portraitImg);
         };
 
         // --- Render loop ---
         const loop = () => {
             rafId = requestAnimationFrame(loop);
-            frameCount = (frameCount + 1) % 120;
-            if (frameCount === 0) buildFlowField();
+            frameCount = (frameCount + 1) % 180;
+            if (frameCount === 0) buildNoise();
 
-            // 1. Fade trail
+            // Fade trail — slightly faster fade for crisper face outline
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = 1;
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+            ctx.fillStyle = 'rgba(0,0,0,0.08)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 2. Ghost portrait at very low opacity (face silhouette)
-            if (portraitImg && imgDrawParams) {
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.globalAlpha = 0.04;
-                ctx.drawImage(portraitImg, imgDrawParams.dx, imgDrawParams.dy, imgDrawParams.dw, imgDrawParams.dh);
-                ctx.globalAlpha = 1;
-            }
-
-            // 3. Particles with additive glow
+            // Draw particles with screen blending (glow/bloom effect)
             ctx.globalCompositeOperation = 'screen';
             particles.forEach(p => {
-                const col = Math.min(Math.floor(p.x / CELL_SIZE), cols - 1);
-                const row = Math.min(Math.floor(p.y / CELL_SIZE), rows - 1);
-                const angle = (flowField[row] && flowField[row][col] !== undefined)
-                    ? flowField[row][col] : 0;
-                p.update(angle, mouseX, mouseY);
+                const col = Math.min(Math.floor(p.x / CELL), cols - 1);
+                const row = Math.min(Math.floor(p.y / CELL), rows - 1);
+                const n   = (noiseField[row] && noiseField[row][col]) || { nx: 0, ny: 0 };
+                p.update(n.nx, n.ny, mouseX, mouseY);
                 p.draw(ctx);
             });
         };
 
         // --- Mouse ---
         section.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX - (sectionRect ? sectionRect.left : section.getBoundingClientRect().left);
-            mouseY = e.clientY - (sectionRect ? sectionRect.top : section.getBoundingClientRect().top);
+            const r = sectionRect || section.getBoundingClientRect();
+            mouseX = e.clientX - r.left;
+            mouseY = e.clientY - r.top;
         });
         section.addEventListener('mouseleave', () => { mouseX = null; mouseY = null; });
 
@@ -417,10 +398,13 @@ class AntonellaApp {
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => { resize(); sectionRect = section.getBoundingClientRect(); }, 200);
+            resizeTimer = setTimeout(() => {
+                resize();
+                sectionRect = section.getBoundingClientRect();
+            }, 200);
         });
 
-        // --- IntersectionObserver: defer init until visible ---
+        // --- IntersectionObserver: defer init until section visible ---
         let initialized = false;
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
