@@ -1,177 +1,352 @@
-import * as THREE from 'three';
-
-class LusionApp {
-    constructor() {
-        this.container = document.querySelector('#canvas-webgl');
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({
-            canvas: this.container,
-            antialias: true,
-            alpha: true
-        });
-        
-        this.mouse = new THREE.Vector2(0, 0);
-        this.targetMouse = new THREE.Vector2(0, 0);
-        
-        this.init();
-        this.initLoader();
+// Antonella Portfolio - Lusion.co Style Effects Overhaul
+class Particle {
+    constructor(canvasWidth, canvasHeight) {
+        this.cw = canvasWidth;
+        this.ch = canvasHeight;
+        this.reset();
     }
 
-    initLoader() {
-        console.log('AntonellaApp: Iniciando cargador...');
-        let percentage = 0;
-        const loaderPercent = document.querySelector('.loader-percent');
-        const loaderProgress = document.querySelector('.loader-progress');
-        const loader = document.querySelector('#loader');
+    reset() {
+        this.x = Math.random() * this.cw;
+        this.y = Math.random() * this.ch;
+        this.vx = 0;
+        this.vy = 0;
+        this.speed = 0.5 + Math.random() * 1.0;
+        const alpha = 0.4 + Math.random() * 0.4;
+        const rg = 150 + Math.floor(Math.random() * 70);
+        const b = 200 + Math.floor(Math.random() * 55);
+        this.color = `rgba(${rg},${rg + 20},${b},${alpha})`;
+    }
 
-        if (!loader || !loaderPercent) {
-            console.warn('AntonellaApp: Elementos del cargador no encontrados, saltando preloader.');
-            document.body.classList.remove('loading');
-            return;
-        }
+    update(flowAngle, mouseX, mouseY) {
+        // Flow field nudge
+        this.vx += Math.cos(flowAngle) * 0.05;
+        this.vy += Math.sin(flowAngle) * 0.05;
 
-        const interval = setInterval(() => {
-            percentage += Math.floor(Math.random() * 8) + 2;
-            if (percentage >= 100) {
-                percentage = 100;
-                clearInterval(interval);
-                setTimeout(() => {
-                    loader.classList.add('loaded');
-                    document.body.classList.remove('loading');
-                    console.log('AntonellaApp: Cargador completo.');
-                }, 500);
+        // Mouse repulsion
+        if (mouseX !== null) {
+            const dx = this.x - mouseX;
+            const dy = this.y - mouseY;
+            const distSq = dx * dx + dy * dy;
+            const radius = 150; // matches REPULSION_RADIUS in initAboutCanvas
+            if (distSq < radius * radius && distSq > 0) {
+                const dist = Math.sqrt(distSq);
+                const force = (1 - dist / radius) * 3.0;
+                this.vx += (dx / dist) * force * 0.1;
+                this.vy += (dy / dist) * force * 0.1;
             }
-            loaderPercent.innerText = percentage.toString().padStart(2, '0');
-            if (loaderProgress) loaderProgress.style.width = percentage + '%';
-        }, 50);
+        }
 
-        // Fail-safe: Hide loader after 5 seconds if it gets stuck
-        setTimeout(() => {
-            if (document.body.classList.contains('loading')) {
-                console.warn('AntonellaApp: Cargador trabado, forzando revelación.');
-                loader.classList.add('loaded');
-                document.body.classList.remove('loading');
-                clearInterval(interval);
-            }
-        }, 5000);
-    }
+        // Damping
+        this.vx *= 0.95;
+        this.vy *= 0.95;
 
-    init() {
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        
-        this.camera.position.z = 3;
+        this.x += this.vx * this.speed;
+        this.y += this.vy * this.speed;
 
-        // Create organic 3D background
-        this.createMesh();
-        
-        // Add lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        this.scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0x2E5BFF, 1);
-        directionalLight.position.set(5, 5, 5);
-        this.scene.add(directionalLight);
-
-        // Events
-        window.addEventListener('resize', () => this.onResize());
-        window.addEventListener('mousemove', (e) => this.onMouseMove(e));
-        
-        this.animate();
-        this.initCursor();
-    }
-
-    createMesh() {
-        // A soft, organic sphere made of points/lines
-        const geometry = new THREE.IcosahedronGeometry(1.5, 4);
-        const material = new THREE.MeshPhongMaterial({
-            color: 0x2E5BFF,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.15,
-            wireframeLinewidth: 1
-        });
-        
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.scene.add(this.mesh);
-
-        // Add some points for extra sparkle
-        const pointsGeometry = new THREE.IcosahedronGeometry(1.55, 3);
-        const pointsMaterial = new THREE.PointsMaterial({
-            color: 0xffffff,
-            size: 0.012
-        });
-        this.points = new THREE.Points(pointsGeometry, pointsMaterial);
-        this.scene.add(this.points);
-    }
-
-    onMouseMove(e) {
-        this.targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-        this.targetMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        
-        // Update custom cursor
-        const cursor = document.querySelector('.cursor');
-        if (cursor) {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+        // Wrap / reset when out of bounds
+        if (this.x < -5 || this.x > this.cw + 5 || this.y < -5 || this.y > this.ch + 5) {
+            this.reset();
         }
     }
 
-    initCursor() {
-        // Link hover effect
-        const links = document.querySelectorAll('a, button');
-        const cursor = document.querySelector('.cursor');
-        links.forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                cursor.style.transform = 'scale(4)';
-                cursor.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                cursor.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-            });
-            link.addEventListener('mouseleave', () => {
-                cursor.style.transform = 'scale(1)';
-                cursor.style.backgroundColor = '#2E5BFF';
-            });
-        });
-    }
-
-    onResize() {
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    animate() {
-        requestAnimationFrame(() => this.animate());
-        
-        // Smoothly interpolate mouse
-        this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.05;
-        this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.05;
-        
-        // Rotate mesh based on mouse
-        if (this.mesh) {
-            this.mesh.rotation.y += 0.002;
-            this.mesh.rotation.x += 0.001;
-            
-            this.mesh.rotation.y += this.mouse.x * 0.05;
-            this.mesh.rotation.x += -this.mouse.y * 0.05;
-        }
-
-        if (this.points) {
-            this.points.rotation.y -= 0.001;
-            this.points.rotation.x -= 0.0005;
-        }
-        
-        this.renderer.render(this.scene, this.camera);
+    draw(ctx) {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 1.2, 0, Math.PI * 2);
+        ctx.fill();
     }
 }
 
-// Wrap initialization to ensure DOM is ready
-window.addEventListener('DOMContentLoaded', () => {
-    console.log('AntonellaApp: Inicializando...');
-    try {
-        new LusionApp();
-    } catch (e) {
-        console.error('AntonellaApp: Error al inicializar', e);
+class AntonellaApp {
+    constructor() {
+        this.initLenis();
+        this.initLoader();
+        this.initGSAP();
+        this.initInteractive();
+        this.initAboutCanvas();
     }
-});
+
+    initLenis() {
+        this.lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smoothWheel: true,
+            wheelMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time) {
+            this.lenis.raf(time);
+            requestAnimationFrame(raf.bind(this));
+        }
+        requestAnimationFrame(raf.bind(this));
+
+        // Sync scrollTrigger with Lenis
+        this.lenis.on('scroll', ScrollTrigger.update);
+    }
+
+    initLoader() {
+        const loaderPercent = document.querySelector('.loader-percent');
+        const loaderProgress = document.querySelector('.loader-progress');
+        const loader = document.querySelector('#loader');
+        let percentage = 0;
+
+        const interval = setInterval(() => {
+            percentage += Math.floor(Math.random() * 10) + 1;
+            if (percentage >= 100) {
+                percentage = 100;
+                clearInterval(interval);
+                this.revealPage(loader);
+            }
+            if (loaderPercent) loaderPercent.innerText = percentage.toString().padStart(2, '0');
+            if (loaderProgress) loaderProgress.style.width = percentage + '%';
+        }, 30);
+    }
+
+    revealPage(loader) {
+        gsap.to(loader, {
+            yPercent: -100,
+            duration: 1.5,
+            ease: "expo.inOut",
+            onComplete: () => {
+                document.body.classList.remove('loading');
+                loader.style.display = 'none';
+                this.animateHero();
+            }
+        });
+    }
+
+    animateHero() {
+        const heroTitle = document.querySelector('.split-text');
+        const heroSub = document.querySelector('.hero-subtext');
+        const heroImg = document.querySelector('.hero-image-container');
+
+        const tl = gsap.timeline();
+        
+        tl.from(heroImg, {
+            scale: 1.2,
+            filter: "blur(20px)",
+            duration: 2,
+            ease: "expo.out"
+        }, 0);
+
+        tl.from(".split-text", {
+            y: 100,
+            opacity: 0,
+            duration: 1,
+            ease: "power4.out"
+        }, 0.5);
+
+        tl.from(heroSub, {
+            y: 20,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out"
+        }, 1);
+    }
+
+    initGSAP() {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Image Parallax & Reveal Effect
+        const sections = document.querySelectorAll('section');
+        
+        sections.forEach(section => {
+            const images = section.querySelectorAll('img');
+            
+            images.forEach(img => {
+                // Wrap image in a container if it's not already
+                const parent = img.parentElement;
+                
+                gsap.fromTo(img, 
+                    { y: -50, scale: 1.1 }, 
+                    { 
+                        y: 50, 
+                        scale: 1,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: parent,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: true
+                        }
+                    }
+                );
+            });
+        });
+
+        // Text Scramble / Character Reveal (Simplified for basic text)
+        const revealTexts = document.querySelectorAll('.ultra-title, .about-info-block h3, .stat-value');
+        revealTexts.forEach(text => {
+            gsap.from(text, {
+                scrollTrigger: {
+                    trigger: text,
+                    start: "top 90%",
+                },
+                y: 100,
+                opacity: 0,
+                duration: 1.5,
+                ease: "expo.out"
+            });
+        });
+    }
+
+    initInteractive() {
+        const cursor = document.querySelector('.cursor');
+        const links = document.querySelectorAll('a, button, .gallery-item, .media-box, .btn-archive');
+
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.2,
+                ease: "power2.out"
+            });
+        });
+
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                gsap.to(cursor, { 
+                    scale: 6, 
+                    backgroundColor: "rgba(255,255,255,0.1)", 
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    mixBlendMode: "difference",
+                    duration: 0.3 
+                });
+            });
+            link.addEventListener('mouseleave', () => {
+                gsap.to(cursor, { 
+                    scale: 1, 
+                    backgroundColor: "white", 
+                    border: "none",
+                    mixBlendMode: "normal",
+                    duration: 0.3 
+                });
+            });
+        });
+
+        // Marquee Smooth Speed Control
+        const marquee = document.querySelector('.marquee-content');
+        if (marquee) {
+            this.lenis.on('scroll', (e) => {
+                const speed = 1 + Math.abs(e.velocity) * 0.05;
+                gsap.to(marquee, { timeScale: speed, duration: 0.5 });
+            });
+        }
+    }
+
+    initAboutCanvas() {
+        const section = document.querySelector('.about-stitch');
+        const canvas = document.getElementById('about-canvas');
+        if (!canvas || !section) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        const PARTICLE_COUNT = 800;
+        const CELL_SIZE = 20;
+        // REPULSION_RADIUS = 150 — keep in sync with the radius value in Particle.update()
+
+        let particles = [];
+        let flowField = [];
+        let mouseX = null;
+        let mouseY = null;
+        let rafId = null;
+        let frameCount = 0;
+        let cols = 0;
+        let rows = 0;
+        let sectionRect = null;
+
+        const buildFlowField = () => {
+            const t = frameCount * 0.001;
+            flowField = [];
+            for (let r = 0; r < rows; r++) {
+                flowField[r] = [];
+                for (let c = 0; c < cols; c++) {
+                    flowField[r][c] =
+                        Math.sin(c * 0.1 + t) *
+                        Math.cos(r * 0.1 + t * 0.7) *
+                        Math.PI * 4;
+                }
+            }
+        };
+
+        const resize = () => {
+            canvas.width = section.offsetWidth;
+            canvas.height = section.offsetHeight;
+            sectionRect = section.getBoundingClientRect();
+            cols = Math.ceil(canvas.width / CELL_SIZE);
+            rows = Math.ceil(canvas.height / CELL_SIZE);
+            buildFlowField();
+            particles = Array.from(
+                { length: PARTICLE_COUNT },
+                () => new Particle(canvas.width, canvas.height)
+            );
+        };
+
+        const loop = () => {
+            rafId = requestAnimationFrame(loop);
+            frameCount = (frameCount + 1) % 120;
+
+            if (frameCount === 0) buildFlowField();
+
+            // Trail: semi-transparent fill instead of clearRect
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Additive blending for glow
+            ctx.globalCompositeOperation = 'screen';
+
+            particles.forEach(p => {
+                const col = Math.min(Math.floor(p.x / CELL_SIZE), cols - 1);
+                const row = Math.min(Math.floor(p.y / CELL_SIZE), rows - 1);
+                const angle = (flowField[row] && flowField[row][col] !== undefined)
+                    ? flowField[row][col]
+                    : 0;
+                p.update(angle, mouseX, mouseY);
+                p.draw(ctx);
+            });
+        };
+
+        // Mouse coords relative to canvas top-left
+        section.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX - (sectionRect ? sectionRect.left : section.getBoundingClientRect().left);
+            mouseY = e.clientY - (sectionRect ? sectionRect.top : section.getBoundingClientRect().top);
+        });
+
+        section.addEventListener('mouseleave', () => {
+            mouseX = null;
+            mouseY = null;
+        });
+
+        // Debounced resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => { resize(); sectionRect = section.getBoundingClientRect(); }, 200);
+        });
+
+        // Start/stop loop with visibility; defer particle init until first view
+        let initialized = false;
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                if (!initialized) { initialized = true; resize(); }
+                if (!rafId) loop();
+            } else {
+                if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            }
+        }, { threshold: 0.05 });
+
+        observer.observe(section);
+    }
+}
+
+// Initializing the Premium Experience
+window.onload = () => {
+    new AntonellaApp();
+};
