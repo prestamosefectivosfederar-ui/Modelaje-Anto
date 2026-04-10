@@ -368,17 +368,26 @@ class AntonellaApp {
             console.log(`[portrait] Sampled ${candidates.length} candidates → ${pool.length} weighted targets.`);
         };
 
-        // --- Load portrait image ---
-        const img = new Image();
-        img.src = 'about_model.png';
-        img.onerror = () => {
-            console.warn('[portrait] about_model.png failed to load. Using oval fallback.');
-            if (particles.length > 0) assignOvalFallback();
+        // --- Load portrait image (tries candidates in order) ---
+        const PORTRAIT_CANDIDATES = ['about_model.png', 'hero_antonella.png', 'ab1.png', 'stats_portrait.png'];
+        const tryLoadPortrait = (candidates) => {
+            if (candidates.length === 0) {
+                console.warn('[portrait] No portrait image found. Oval fallback permanent.');
+                return;
+            }
+            const img = new Image();
+            img.src = candidates[0];
+            img.onload = () => {
+                console.log(`[portrait] Loaded: ${candidates[0]}`);
+                portraitImg = img;
+                if (particles.length > 0) assignFromImage(img);
+            };
+            img.onerror = () => {
+                console.warn(`[portrait] ${candidates[0]} failed, trying next...`);
+                tryLoadPortrait(candidates.slice(1));
+            };
         };
-        img.onload = () => {
-            portraitImg = img;
-            if (particles.length > 0) assignFromImage(img);
-        };
+        tryLoadPortrait(PORTRAIT_CANDIDATES);
 
         // --- Resize ---
         const resize = () => {
@@ -390,7 +399,12 @@ class AntonellaApp {
             noiseField = [];
             buildNoise();
             particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
-            if (portraitImg) assignFromImage(portraitImg);
+            // Always assign targets after creating particles
+            if (portraitImg) {
+                assignFromImage(portraitImg);
+            } else {
+                assignOvalFallback(); // image not loaded yet — placeholder until it arrives
+            }
         };
 
         // --- Render loop ---
