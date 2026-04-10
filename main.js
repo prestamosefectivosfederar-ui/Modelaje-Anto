@@ -18,7 +18,7 @@ class Particle {
         } else {
             this.color = `rgba(255,255,255,${a})`;
         }
-        this.r = 0.7 + Math.random() * 1.1;
+        this.r = 1.2 + Math.random() * 1.4;
     }
 
     setTarget(tx, ty, cw, ch) {
@@ -285,33 +285,56 @@ class AntonellaApp {
             }
         };
 
+        // --- Fallback: distribute particles in a portrait-shaped oval ---
+        const assignOvalFallback = () => {
+            const cx = canvas.width * 0.5;
+            const cy = canvas.height * 0.38;
+            const rx = canvas.width  * 0.18;
+            const ry = canvas.height * 0.32;
+            particles.forEach(p => {
+                const angle = Math.random() * Math.PI * 2;
+                const r = Math.sqrt(Math.random());
+                p.setTarget(
+                    cx + Math.cos(angle) * rx * r,
+                    cy + Math.sin(angle) * ry * r,
+                    canvas.width, canvas.height
+                );
+            });
+            console.warn('[portrait] Using oval fallback — serve from localhost to enable pixel sampling.');
+        };
+
         // --- Sample image → assign one feature point per particle ---
         const assignFromImage = (img) => {
-            // Offscreen canvas: fit image to canvas width, centered vertically
-            const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * 0.9;
-            const dw = img.width * scale;
+            const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * 0.88;
+            const dw = img.width  * scale;
             const dh = img.height * scale;
-            const dx = (canvas.width - dw) / 2;
+            const dx = (canvas.width  - dw) / 2;
             const dy = (canvas.height - dh) / 2;
 
-            // Sample at reduced size for speed
-            const SW = Math.round(dw);
-            const SH = Math.round(dh);
+            const SW = Math.round(Math.min(dw, 500));
+            const SH = Math.round(Math.min(dh, 700));
             const off = document.createElement('canvas');
             off.width = SW; off.height = SH;
             const oCtx = off.getContext('2d');
             oCtx.drawImage(img, 0, 0, SW, SH);
-            const data = oCtx.getImageData(0, 0, SW, SH).data;
 
-            // Collect all bright pixels as candidate targets (weighted by luminance)
+            let data;
+            try {
+                data = oCtx.getImageData(0, 0, SW, SH).data;
+            } catch (e) {
+                // SecurityError on file:// — use fallback
+                console.warn('[portrait] getImageData blocked (file:// protocol?). Using oval fallback.', e);
+                assignOvalFallback();
+                return;
+            }
+
             const candidates = [];
             const step = 3;
             for (let y = 0; y < SH; y += step) {
                 for (let x = 0; x < SW; x += step) {
                     const i = (y * SW + x) * 4;
                     const lum = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-                    if (lum > 40) {
-                        // Convert to canvas coords
+                    if (lum > 35) {
                         candidates.push({
                             x: dx + (x / SW) * dw,
                             y: dy + (y / SH) * dh,
@@ -320,10 +343,13 @@ class AntonellaApp {
                     }
                 }
             }
-            if (candidates.length === 0) return;
 
-            // Build weighted pool: brighter pixels appear more often
-            // so particles concentrate on highlights (eyes, skin, hair edges)
+            if (candidates.length < 10) {
+                console.warn('[portrait] Not enough bright pixels — using oval fallback.');
+                assignOvalFallback();
+                return;
+            }
+
             const pool = [];
             const maxW = Math.max(...candidates.map(c => c.w));
             for (const c of candidates) {
@@ -331,7 +357,6 @@ class AntonellaApp {
                 for (let k = 0; k < reps; k++) pool.push(c);
             }
 
-            // Assign each particle a random target from weighted pool
             particles.forEach(p => {
                 const fp = pool[Math.floor(Math.random() * pool.length)];
                 p.setTarget(
@@ -340,11 +365,16 @@ class AntonellaApp {
                     canvas.width, canvas.height
                 );
             });
+            console.log(`[portrait] Sampled ${candidates.length} candidates → ${pool.length} weighted targets.`);
         };
 
         // --- Load portrait image ---
         const img = new Image();
         img.src = 'about_model.png';
+        img.onerror = () => {
+            console.warn('[portrait] about_model.png failed to load. Using oval fallback.');
+            if (particles.length > 0) assignOvalFallback();
+        };
         img.onload = () => {
             portraitImg = img;
             if (particles.length > 0) assignFromImage(img);
@@ -369,13 +399,13 @@ class AntonellaApp {
             frameCount = (frameCount + 1) % 180;
             if (frameCount === 0) buildNoise();
 
-            // Fade trail — slightly faster fade for crisper face outline
+            // Fade trail
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = 1;
-            ctx.fillStyle = 'rgba(0,0,0,0.08)';
+            ctx.fillStyle = 'rgba(0,0,0,0.07)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw particles with screen blending (glow/bloom effect)
+            // Draw particles with screen blending (glow/bloom)
             ctx.globalCompositeOperation = 'screen';
             particles.forEach(p => {
                 const col = Math.min(Math.floor(p.x / CELL), cols - 1);
@@ -385,6 +415,15 @@ class AntonellaApp {
                 p.draw(ctx);
             });
         };
+
+        // Fill canvas black immediately so it doesn't flicker transparent
+        const initCanvas = () => {
+            canvas.width  = section.offsetWidth  || window.innerWidth;
+            canvas.height = section.offsetHeight || window.innerHeight;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        };
+        initCanvas();
 
         // --- Mouse ---
         section.addEventListener('mousemove', (e) => {
