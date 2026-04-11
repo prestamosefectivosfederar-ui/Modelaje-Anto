@@ -232,8 +232,9 @@ nav {
 .hero-content {
   position: relative;
   z-index: 10;
-  padding: 0 8vw;
-  max-width: 700px;
+  padding: 0 4vw; /* Moved further left */
+  max-width: 800px;
+  text-align: left;
 }
 
 .hero-eyebrow {
@@ -726,10 +727,10 @@ nav {
   display: flex;
   align-items: center;
   height: 100%;
-  gap: 24px;
-  padding: 0 8vw;
+  gap: 30px;
+  padding: 0 4vw; /* More space on the left */
   will-change: transform;
-  perspective: 2000px; /* Enhanced depth for 3D interactions */
+  perspective: 2000px;
 }
 
 .gallery-h-item {
@@ -747,6 +748,32 @@ nav {
   overflow: hidden;
   position: relative;
   border-radius: 4px;
+  background: #111;
+}
+
+/* Light Sweep for Pop Effect */
+.gallery-h-img-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-20deg);
+  transition: none;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gallery-h-item:hover .gallery-h-img-wrap::after {
+  left: 150%;
+  transition: left 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gallery-h-img-wrap img {
