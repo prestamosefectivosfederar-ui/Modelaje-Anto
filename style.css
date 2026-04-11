@@ -1257,12 +1257,13 @@ nav {
 
 .bio-services .service-item {
   display: flex;
-  align-items: center;
-  gap: 60px;
-  padding: 50px 0;
+  align-items: flex-start; /* Alignment FIXED to left */
+  gap: 30px; /* Tighter gap */
+  padding: 40px 0;
   border-bottom: 1px solid rgba(255,255,255,0.05);
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
 .bio-services .service-item:hover {
@@ -1302,10 +1303,10 @@ nav {
 
 .bio-services .service-hover-image {
   position: absolute;
-  right: 10%;
+  left: 60%; /* Positioned further right to not obscure text */
   top: 50%;
   transform: translateY(-50%) scale(0.9) rotate(2deg);
-  width: 280px;
+  width: 320px;
   aspect-ratio: 4/5;
   overflow: hidden;
   opacity: 0;
