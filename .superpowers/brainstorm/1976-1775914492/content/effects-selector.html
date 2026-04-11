@@ -1,0 +1,341 @@
+<style>
+  body { background: #0a0a0a; color: #f0f0f0; font-family: 'Inter', sans-serif; margin: 0; padding: 24px; }
+  h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+  .subtitle { color: #777; font-size: 0.85rem; margin-bottom: 32px; letter-spacing: 0.05em; }
+
+  .effects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .effect-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+    user-select: none;
+  }
+  .effect-card:hover { border-color: #555; transform: translateY(-2px); }
+  .effect-card.selected { border-color: #c8a96e; background: #161410; }
+  .effect-card.selected .checkmark { opacity: 1; }
+
+  .effect-demo {
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .effect-info { padding: 14px 16px 16px; }
+  .effect-info h3 { margin: 0 0 4px; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+  .effect-info p { margin: 0; font-size: 0.78rem; color: #777; line-height: 1.5; }
+
+  .checkmark { width: 18px; height: 18px; background: #c8a96e; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; flex-shrink: 0; }
+  .checkmark::after { content: '✓'; font-size: 11px; color: #000; font-weight: 900; }
+
+  .difficulty { font-size: 0.68rem; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  .difficulty.easy { background: #1a2e1a; color: #5a9a5a; }
+  .difficulty.medium { background: #2e241a; color: #c8a96e; }
+  .difficulty.hard { background: #2e1a1a; color: #c86e6e; }
+
+  /* Demo: Magnetic Cursor */
+  .demo-magnetic { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .mag-btn {
+    padding: 12px 28px; border: 1px solid #c8a96e; color: #c8a96e;
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s;
+    cursor: pointer; background: transparent;
+  }
+  .mag-btn:hover { background: #c8a96e22; transform: scale(1.08); }
+  .demo-magnetic .cursor-dot {
+    width: 8px; height: 8px; background: #c8a96e; border-radius: 50%;
+    position: absolute; top: 50%; left: 30%; transform: translate(-50%, -50%);
+    animation: orbitBtn 3s ease-in-out infinite;
+  }
+  @keyframes orbitBtn {
+    0%,100% { left: 30%; top: 60%; }
+    25% { left: 50%; top: 50%; transform: translate(-50%,-50%) scale(3); opacity: 0.5; }
+    50% { left: 70%; top: 40%; }
+    75% { left: 50%; top: 50%; transform: translate(-50%,-50%) scale(3); opacity: 0.5; }
+  }
+
+  /* Demo: Image Distortion */
+  .demo-distortion { width: 100%; height: 100%; position: relative; overflow: hidden; }
+  .demo-distortion img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.4); transition: filter 0.5s; }
+  .distort-overlay {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at var(--mx, 50%) var(--my, 50%), rgba(200,169,110,0.15) 0%, transparent 60%);
+    animation: moveGradient 4s ease-in-out infinite;
+  }
+  @keyframes moveGradient {
+    0%,100% { --mx: 20%; --my: 30%; opacity: 0.6; }
+    33% { --mx: 70%; --my: 60%; opacity: 1; }
+    66% { --mx: 40%; --my: 80%; opacity: 0.8; }
+  }
+  .distort-ripple {
+    position: absolute; border-radius: 50%; border: 1px solid rgba(200,169,110,0.4);
+    animation: rippleOut 3s ease-out infinite;
+  }
+  @keyframes rippleOut {
+    0% { width: 0; height: 0; top: 50%; left: 50%; opacity: 1; margin: 0; }
+    100% { width: 120px; height: 120px; top: 50%; left: 50%; opacity: 0; margin: -60px 0 0 -60px; }
+  }
+
+  /* Demo: Text Stagger */
+  .demo-text { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; padding: 0 20px; }
+  .stagger-word { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; overflow: hidden; }
+  .stagger-word span {
+    display: inline-block;
+    animation: charReveal 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  @keyframes charReveal { to { opacity: 1; transform: translateY(0); } }
+  .w1 span:nth-child(1) { animation-delay: 0.0s }
+  .w1 span:nth-child(2) { animation-delay: 0.06s }
+  .w1 span:nth-child(3) { animation-delay: 0.12s }
+  .w1 span:nth-child(4) { animation-delay: 0.18s }
+  .w1 span:nth-child(5) { animation-delay: 0.24s }
+  .w1 span:nth-child(6) { animation-delay: 0.30s }
+  .w2 span:nth-child(1) { animation-delay: 0.5s }
+  .w2 span:nth-child(2) { animation-delay: 0.56s }
+  .w2 span:nth-child(3) { animation-delay: 0.62s }
+  .w2 span:nth-child(4) { animation-delay: 0.68s }
+  .w2 span:nth-child(5) { animation-delay: 0.74s }
+  .w2 span:nth-child(6) { animation-delay: 0.80s }
+  .stagger-word .outline-char { -webkit-text-stroke: 1px #c8a96e; color: transparent; }
+  /* Loop animation */
+  .demo-text { animation: textLoop 5s ease-in-out infinite; }
+  @keyframes textLoop {
+    0%,10% { opacity: 0; }
+    15%,75% { opacity: 1; }
+    85%,100% { opacity: 0; }
+  }
+
+  /* Demo: Fluid Particles */
+  .demo-particles canvas { width: 100% !important; height: 100% !important; display: block; }
+  #particlesCanvas { width: 100%; height: 160px; }
+
+  /* Demo: 3D Tilt */
+  .demo-tilt { perspective: 600px; }
+  .tilt-img {
+    width: 80px; height: 110px; background: linear-gradient(135deg, #1a1a1a, #333);
+    border: 1px solid #444; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; color: #666; letter-spacing: 0.1em;
+    animation: tiltLoop 4s ease-in-out infinite;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    overflow: hidden; position: relative;
+  }
+  .tilt-img::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+    animation: tiltShine 4s ease-in-out infinite;
+  }
+  @keyframes tiltLoop {
+    0%,100% { transform: rotateX(8deg) rotateY(-12deg); }
+    33% { transform: rotateX(-5deg) rotateY(12deg); }
+    66% { transform: rotateX(10deg) rotateY(5deg); }
+  }
+  @keyframes tiltShine {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Demo: Horizontal Scroll */
+  .demo-hscroll { display: flex; gap: 8px; padding: 16px; overflow: hidden; position: relative; }
+  .h-card {
+    flex-shrink: 0; width: 80px; height: 110px; border-radius: 6px;
+    background: linear-gradient(160deg, #1e1e1e, #2a2a2a);
+    border: 1px solid #333;
+    animation: slideLeft 8s linear infinite;
+  }
+  .h-card:nth-child(2) { background: linear-gradient(160deg, #1e1814, #2a241e); border-color: #3a3020; }
+  .h-card:nth-child(3) { background: linear-gradient(160deg, #1a1e1a, #242a24); border-color: #2a382a; }
+  .h-card:nth-child(4) { background: linear-gradient(160deg, #1e1a1e, #2a242a); border-color: #382a38; }
+  @keyframes slideLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50px); }
+  }
+  .demo-hscroll::after {
+    content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 40px;
+    background: linear-gradient(to left, #0d0d0d, transparent);
+  }
+
+  .submit-hint { text-align: center; color: #555; font-size: 0.8rem; letter-spacing: 0.05em; margin-top: 8px; }
+
+  .tag-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+</style>
+
+<h2>¿Qué efectos de Lusion querés aplicar?</h2>
+<p class="subtitle">Seleccioná uno o varios — podés combinarlos. Priorizá según lo que más te llame la atención.</p>
+
+<div class="effects-grid" data-multiselect>
+
+  <!-- Magnetic Buttons -->
+  <div class="effect-card" data-choice="magnetic" onclick="toggleSelect(this)">
+    <div class="effect-demo demo-magnetic">
+      <div class="cursor-dot"></div>
+      <button class="mag-btn">BOOKING</button>
+    </div>
+    <div class="effect-info">
+      <h3>Cursor Magnético <div class="checkmark"></div></h3>
+      <div class="tag-row">
+        <span class="difficulty easy">Fácil</span>
+      </div>
+      <p>Los botones atraen el cursor cuando se acerca. Sensación premium, muy característico de Lusion.</p>
+    </div>
+  </div>
+
+  <!-- Text Stagger -->
+  <div class="effect-card" data-choice="text-stagger" onclick="toggleSelect(this)">
+    <div class="effect-demo">
+      <div class="demo-text">
+        <div class="stagger-word w1">
+          <span>A</span><span>N</span><span>T</span><span>O</span><span>N</span><span>A</span>
+        </div>
+        <div class="stagger-word w2">
+          <span class="outline-char">D</span><span class="outline-char">I</span><span class="outline-char">M</span><span class="outline-char">E</span><span class="outline-char">N</span><span class="outline-char">Z</span>
+        </div>
+      </div>
+    </div>
+    <div class="effect-info">
+      <h3>Texto Carácter a Carácter <div class="checkmark"></div></h3>
+      <div class="tag-row">
+        <span class="difficulty easy">Fácil</span>
+      </div>
+      <p>Cada letra entra en escena individualmente al hacer scroll. Da profundidad cinematográfica a los títulos.</p>
+    </div>
+  </div>
+
+  <!-- Image Distortion on Hover -->
+  <div class="effect-card" data-choice="distortion" onclick="toggleSelect(this)">
+    <div class="effect-demo demo-distortion">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=60&w=400&auto=format&fit=crop" alt="model">
+      <div class="distort-overlay"></div>
+      <div class="distort-ripple"></div>
+    </div>
+    <div class="effect-info">
+      <h3>Distorsión en Hover <div class="checkmark"></div></h3>
+      <div class="tag-row">
+        <span class="difficulty medium">Medio</span>
+      </div>
+      <p>Las imágenes de la galería se distorsionan/ondean al pasar el cursor. Efecto de agua o calor.</p>
+    </div>
+  </div>
+
+  <!-- 3D Tilt -->
+  <div class="effect-card" data-choice="tilt3d" onclick="toggleSelect(this)">
+    <div class="effect-demo demo-tilt">
+      <div class="tilt-img">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=60&w=200&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;opacity:0.7;">
+      </div>
+    </div>
+    <div class="effect-info">
+      <h3>Inclinación 3D en Hover <div class="checkmark"></div></h3>
+      <div class="tag-row">
+        <span class="difficulty easy">Fácil</span>
+      </div>
+      <p>Las fotos se inclinan en perspectiva 3D siguiendo el movimiento del mouse. Da volumen y vida.</p>
+    </div>
+  </div>
+
+  <!-- Fluid Particles -->
+  <div class="effect-card" data-choice="fluid-particles" onclick="toggleSelect(this)">
+    <div class="effect-demo demo-particles">
+      <canvas id="particlesCanvas"></canvas>
+    </div>
+    <div class="effect-info">
+      <h3>Partículas Fluidas Interactivas <div class="checkmark"></div></h3>
+      <div class="tag-row">
+        <span class="difficulty hard">Avanzado</span>
+      </div>
+      <p>Campo de partículas en el hero que fluye y reacciona al cursor. Marca registrada de Lusion.</p>
+    </div>
+  </div>
+
+  <!-- Horizontal Scroll -->
+  <div class="effect-card" data-choice="hscroll" onclick="toggleSelect(this)">
+    <div class="effect-demo demo-hscroll">
+      <div class="h-card"></div>
+      <div class="h-card"></div>
+      <div class="h-card"></div>
+      <div class="h-card"></div>
+      <div class="h-card"></div>
+    </div>
+    <div class="effect-info">
+      <h3>Galería Scroll Horizontal <div class="checkmark"></div></h3>
+      <div class="tag-row">
+        <span class="difficulty medium">Medio</span>
+      </div>
+      <p>La galería de fotos se navega horizontalmente al hacer scroll vertical. Efecto de carrete de película.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="submit-hint">Podés seleccionar varios. Cuando estés listo, escribí tu elección en el chat.</p>
+
+<script>
+  // Particles demo
+  const canvas = document.getElementById('particlesCanvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 280;
+    canvas.height = 160;
+    const pts = Array.from({length: 80}, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6,
+      r: Math.random() * 1.5 + 0.4,
+      a: Math.random() * 0.5 + 0.2
+    }));
+    function animPts() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,169,110,${p.a})`;
+        ctx.fill();
+      });
+      // connect nearby
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i+1; j < pts.length; j++) {
+          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+          const d = Math.sqrt(dx*dx+dy*dy);
+          if (d < 50) {
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.strokeStyle = `rgba(200,169,110,${0.15*(1-d/50)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animPts);
+    }
+    animPts();
+  }
+
+  function toggleSelect(el) {
+    el.classList.toggle('selected');
+    const selected = [...document.querySelectorAll('.effect-card.selected')]
+      .map(c => c.dataset.choice);
+    window.__selections = selected;
+    if (typeof recordSelection === 'function') {
+      recordSelection(selected.join(','), selected.map(s => document.querySelector(`[data-choice="${s}"] h3`)?.childNodes[0]?.textContent?.trim()).join(' + '));
+    }
+  }
+</script>

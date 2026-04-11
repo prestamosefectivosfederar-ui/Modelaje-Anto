@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #080808; color: #f0f0f0; font-family: 'Inter', sans-serif; padding: 24px; }
+
+h2 { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+.subtitle { color: #666; font-size: 0.82rem; margin-bottom: 28px; letter-spacing: 0.05em; }
+
+.options-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.option-wrap {
+  cursor: pointer;
+  border: 2px solid #222;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.option-wrap:hover { border-color: #555; transform: translateY(-2px); }
+.option-wrap.selected { border-color: #c8a96e; }
+.option-wrap.selected .opt-label { background: #c8a96e; color: #000; }
+
+.opt-label {
+  padding: 8px 14px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #111;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* ===================== HERO MOCKUP A ===================== */
+/* Full-bleed portrait + giant split title */
+.hero-a {
+  height: 320px;
+  position: relative;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+.hero-a .bg-img {
+  position: absolute;
+  inset: 0;
+  background: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=60&w=600&auto=format&fit=crop') center/cover;
+  opacity: 0.35;
+  filter: grayscale(0.3);
+}
+.hero-a .particles-hint {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(200,169,110,0.08) 0%, transparent 60%);
+  animation: breathe 4s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+.hero-a .title-top {
+  position: absolute;
+  top: 18px; left: 20px;
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 0.9;
+  color: #fff;
+}
+.hero-a .title-bot {
+  position: absolute;
+  bottom: 40px; right: 20px;
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 0.9;
+  -webkit-text-stroke: 1px #c8a96e;
+  color: transparent;
+}
+.hero-a .sub {
+  position: absolute;
+  bottom: 20px; left: 20px;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: #888;
+  text-transform: uppercase;
+}
+.hero-a .badge {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 48px; height: 48px;
+  border: 1px solid #c8a96e;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.45rem;
+  letter-spacing: 0.1em;
+  color: #c8a96e;
+  text-align: center;
+  text-transform: uppercase;
+}
+.hero-a .particle-dots {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.hero-a canvas { position: absolute; inset: 0; }
+
+
+/* ===================== HERO MOCKUP B ===================== */
+/* Centered + large name with lines */
+.hero-b {
+  height: 320px;
+  position: relative;
+  background: #050505;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.hero-b .bg-img {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 45%;
+  background: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=60&w=400&auto=format&fit=crop') center/cover;
+  opacity: 0.5;
+  clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+.hero-b .bg-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, #050505 50%, transparent 100%);
+}
+.hero-b .content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 0 24px;
+}
+.hero-b .eyebrow {
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: #c8a96e;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.hero-b .name {
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  line-height: 0.9;
+  margin-bottom: 16px;
+}
+.hero-b .name .outline {
+  -webkit-text-stroke: 1px #c8a96e;
+  color: transparent;
+}
+.hero-b .divider {
+  width: 40px; height: 1px;
+  background: #c8a96e;
+  margin-bottom: 10px;
+}
+.hero-b .sub {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: #777;
+  text-transform: uppercase;
+  max-width: 200px;
+}
+.hero-b .scroll-cue {
+  position: absolute;
+  bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font-size: 0.5rem; letter-spacing: 0.2em; color: #555; text-transform: uppercase;
+}
+.hero-b .scroll-line {
+  width: 1px; height: 30px; background: #c8a96e;
+  animation: scrollDown 2s ease-in-out infinite;
+}
+@keyframes scrollDown { 0%,100%{transform:scaleY(1);opacity:1} 50%{transform:scaleY(0.3);opacity:0.3} }
+
+
+/* ===================== HERO MOCKUP C ===================== */
+/* Editorial: portrait left, oversized vertical title right */
+.hero-c {
+  height: 320px;
+  position: relative;
+  background: #060606;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.hero-c .left {
+  position: relative;
+  overflow: hidden;
+}
+.hero-c .left img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.2) contrast(1.1);
+  opacity: 0.8;
+}
+.hero-c .left-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent 60%, #060606 100%);
+}
+.hero-c .right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 16px;
+  position: relative;
+}
+.hero-c .vert-text {
+  position: absolute;
+  right: 10px; top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  font-size: 0.5rem;
+  letter-spacing: 0.3em;
+  color: #444;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.hero-c .big-name {
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+.hero-c .big-name .row2 {
+  -webkit-text-stroke: 1px rgba(200,169,110,0.7);
+  color: transparent;
+  display: block;
+}
+.hero-c .stats-mini {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.hero-c .stat {
+  border-top: 1px solid #222;
+  padding-top: 6px;
+}
+.hero-c .stat span { font-size: 0.48rem; letter-spacing: 0.15em; color: #555; text-transform: uppercase; display: block; }
+.hero-c .stat strong { font-size: 0.8rem; font-weight: 700; color: #c8a96e; }
+.hero-c .btn {
+  margin-top: 16px;
+  padding: 8px 16px;
+  border: 1px solid #c8a96e;
+  color: #c8a96e;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: transparent;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.note {
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 0.78rem;
+  color: #666;
+  line-height: 1.6;
+}
+.note strong { color: #c8a96e; }
+</style>
+</head>
+<body>
+
+<h2>¿Cómo mejoramos el Hero?</h2>
+<p class="subtitle">Tres direcciones visuales — todas incluyen partículas fluidas Three.js + reveal de texto letra a letra. Elegí la composición base.</p>
+
+<div class="options-row">
+
+  <!-- OPTION A -->
+  <div class="option-wrap" data-choice="hero-a" onclick="pick(this)">
+    <div class="hero-a">
+      <div class="bg-img"></div>
+      <div class="particles-hint"></div>
+      <canvas id="ca" width="100%" height="320"></canvas>
+      <div class="title-top">ANTO<br>NELLA</div>
+      <div class="title-bot">DIMEN<br>ZA</div>
+      <div class="sub">Alta Costura · Global</div>
+      <div class="badge">BOOK<br>ING</div>
+    </div>
+    <div class="opt-label">
+      A — Tipografía Dividida
+      <span>↗ Asimétrico</span>
+    </div>
+  </div>
+
+  <!-- OPTION B -->
+  <div class="option-wrap" data-choice="hero-b" onclick="pick(this)">
+    <div class="hero-b">
+      <div class="bg-img"></div>
+      <div class="bg-overlay"></div>
+      <div class="content">
+        <div class="eyebrow">/ Modelo de Alta Costura</div>
+        <div class="name">ANTO<br>NELLA<br><span class="outline">DIMENZA</span></div>
+        <div class="divider"></div>
+        <div class="sub">Editorial · Runway · Comercial</div>
+      </div>
+      <div class="scroll-cue">
+        <div class="scroll-line"></div>
+        Scroll
+      </div>
+    </div>
+    <div class="opt-label">
+      B — Centrado Cinemático
+      <span>↗ Elegante</span>
+    </div>
+  </div>
+
+  <!-- OPTION C -->
+  <div class="option-wrap" data-choice="hero-c" onclick="pick(this)">
+    <div class="hero-c">
+      <div class="left">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=60&w=400&auto=format&fit=crop" alt="">
+        <div class="left-overlay"></div>
+      </div>
+      <div class="right">
+        <div class="big-name">
+          ANTO<br>NELLA<br>
+          <span class="row2">DIMENZA</span>
+        </div>
+        <div class="stats-mini">
+          <div class="stat"><span>Altura</span><strong>178 cm</strong></div>
+          <div class="stat"><span>Base</span><strong>Milán</strong></div>
+          <div class="stat"><span>Tipo</span><strong>Editorial</strong></div>
+          <div class="stat"><span>Status</span><strong>Disponible</strong></div>
+        </div>
+        <button class="btn">Solicitar Booking</button>
+        <div class="vert-text">Antonella Dimenza · 2026</div>
+      </div>
+    </div>
+    <div class="opt-label">
+      C — Editorial Split
+      <span>↗ Fashion Magazine</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="note">
+  <strong>Todos incluyen:</strong> partículas Three.js con shader GLSL reactivas al cursor · reveal letra a letra con GSAP al cargar · luz volumétrica animada · cursor magnético en el botón CTA.
+</div>
+
+<script>
+function pick(el) {
+  document.querySelectorAll('.option-wrap').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const choice = el.dataset.choice;
+  const label = el.querySelector('.opt-label')?.childNodes[0]?.textContent?.trim();
+  if (typeof recordSelection === 'function') recordSelection(choice, label);
+}
+</script>
+</body>
+</html>

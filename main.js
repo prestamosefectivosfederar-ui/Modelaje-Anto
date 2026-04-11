@@ -181,56 +181,6 @@ class MagneticElement {
     }
 }
 
-// ============================================================
-// TiltEffect — inclinación 3D en hover
-// ============================================================
-class TiltEffect {
-    constructor(el, maxTilt = 14) {
-        this.el  = el;
-        this.max = maxTilt;
-        this._addListeners();
-    }
-
-    _addListeners() {
-        this.el.addEventListener('mousemove', (e) => {
-            const rect = this.el.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            const y = (e.clientY - rect.top)  / rect.height;
-            const rotY =  (x - 0.5) * this.max * 2;
-            const rotX = -(y - 0.5) * this.max * 2;
-
-            this.el.style.setProperty('--hx', `${x * 100}%`);
-            this.el.style.setProperty('--hy', `${y * 100}%`);
-
-            if (typeof gsap !== 'undefined') {
-                gsap.to(this.el, {
-                    rotateX: rotX,
-                    rotateY: rotY,
-                    transformPerspective: 800,
-                    duration: 0.4,
-                    ease: 'power2.out',
-                    overwrite: 'auto'
-                });
-            }
-        });
-
-        this.el.addEventListener('mouseleave', () => {
-            if (typeof gsap !== 'undefined') {
-                gsap.to(this.el, {
-                    rotateX: 0,
-                    rotateY: 0,
-                    duration: 0.7,
-                    ease: 'power3.out',
-                    overwrite: 'auto'
-                });
-            }
-        });
-    }
-
-    static applyAll(selector = '.gallery-h-item, .service-item') {
-        document.querySelectorAll(selector).forEach(el => new TiltEffect(el));
-    }
-}
 
 // ============================================================
 // HorizontalGallery — scroll horizontal pinned con GSAP
@@ -349,10 +299,8 @@ class AntonellaApp {
             this.tryInitStatsParticles();
             this.initFilmGrain();
             this.initOverlays();
-            this.initDisplacement();
             new HorizontalGallery();
             MagneticElement.applyAll();
-            TiltEffect.applyAll();
         }, 100);
     }
 
@@ -560,48 +508,6 @@ class AntonellaApp {
         });
     }
 
-    initDisplacement() {
-        document.querySelectorAll('.gallery-h-img-wrap[data-disp]').forEach(wrap => {
-            const idx   = wrap.getAttribute('data-disp');
-            const mapEl = document.getElementById(`disp-map-${idx}`);
-            if (!mapEl) return;
-
-            let current = 0;
-            let target  = 0;
-            let rafId   = null;
-
-            const lerp = (a, b, t) => a + (b - a) * t;
-
-            const animate = () => {
-                current = lerp(current, target, 0.08);
-                mapEl.setAttribute('scale', current.toFixed(2));
-                if (Math.abs(current - target) > 0.1) {
-                    rafId = requestAnimationFrame(animate);
-                } else {
-                    mapEl.setAttribute('scale', target);
-                    rafId = null;
-                }
-            };
-
-            wrap.addEventListener('mouseenter', () => {
-                target = 22;
-                if (!rafId) rafId = requestAnimationFrame(animate);
-            });
-
-            wrap.addEventListener('mousemove', (e) => {
-                const rect = wrap.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width;
-                const y = (e.clientY - rect.top)  / rect.height;
-                target = 14 + Math.abs(x - 0.5) * 20 + Math.abs(y - 0.5) * 20;
-                if (!rafId) rafId = requestAnimationFrame(animate);
-            });
-
-            wrap.addEventListener('mouseleave', () => {
-                target = 0;
-                if (!rafId) rafId = requestAnimationFrame(animate);
-            });
-        });
-    }
 
     initInteractive() {
         const cursor = document.querySelector('.cursor');

@@ -3,7 +3,11 @@
     "allow": [
       "Bash(bash scripts/start-server.sh --project-dir \"c:/Users/HP/.gemini/antigravity/scratch/Modelaje\")",
       "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
-      "mcp__plugin_context-mode_context-mode__ctx_search"
+      "mcp__plugin_context-mode_context-mode__ctx_search",
+      "mcp__plugin_context-mode_context-mode__ctx_fetch_and_index",
+      "Bash(bash:*)",
+      "Bash(cat \"c:/Users/HP/.gemini/antigravity/scratch/Modelaje/.superpowers/brainstorm/\"*/state/server-info)",
+      "Bash(node -e \"const fs=require\\('fs'\\);const code=fs.readFileSync\\('main.js','utf8'\\);try{new Function\\(code\\);console.log\\('OK'\\);}catch\\(e\\){console.error\\('ERROR:',e.message\\);}\")"
     ]
   }
 }
