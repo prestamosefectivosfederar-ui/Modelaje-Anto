@@ -266,14 +266,30 @@ class AntonellaApp {
                 opacity: 0.8
             });
             
-            // Subtle flash when all bars disappear
+            // Light Sweep Animation
+            gsap.fromTo(".light-sweep", 
+                { left: "-20%", opacity: 0 }, 
+                { 
+                    left: "120%", 
+                    opacity: 1, 
+                    duration: 2.5, 
+                    delay: 1.5, 
+                    ease: "power2.inOut" 
+                }
+            );
+
+            // Intense Flash on the portrait
             gsap.fromTo("#hero-portrait", 
-                { filter: "brightness(2) contrast(1.2) grayscale(1)" }, 
+                { 
+                    filter: "brightness(5) contrast(1.5) grayscale(1)",
+                    scale: 1.05
+                }, 
                 { 
                     filter: "brightness(0.6) contrast(1) grayscale(0)", 
-                    duration: 2, 
+                    scale: 1,
+                    duration: 2.5, 
                     delay: 2.2, 
-                    ease: "power2.out" 
+                    ease: "power3.out" 
                 }
             );
         }

@@ -233,12 +233,17 @@ nav {
   z-index: 2;
 }
 
-.grid-square {
-  background: black;
-  width: 100%;
+.light-sweep {
+  position: absolute;
+  top: 0;
+  left: -20%;
+  width: 15%;
   height: 100%;
-  border-right: 1px solid rgba(255,255,255,0.05); /* Leading edge highlight */
-  box-shadow: 0 0 20px rgba(255,255,255,0.05) inset;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+  z-index: 3;
+  pointer-events: none;
+  filter: blur(10px);
+  box-shadow: 0 0 150px rgba(255,255,255,0.3);
 }
 
 #hero-portrait {
