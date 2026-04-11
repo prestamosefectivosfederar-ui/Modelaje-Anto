@@ -71,20 +71,76 @@
 
 
 
-            <section class="gallery">
-                <div class="gallery-container">
-                    <div class="gallery-item large">
-                        <img src="f1.png" alt="Editorial 1">
+            <section class="gallery-horizontal">
+                <!-- SVG Filters para displacement hover -->
+                <svg style="display:none" aria-hidden="true">
+                    <defs>
+                        <filter id="disp-0"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.02" numOctaves="2" seed="1" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" id="disp-map-0"/></filter>
+                        <filter id="disp-1"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.02" numOctaves="2" seed="3" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" id="disp-map-1"/></filter>
+                        <filter id="disp-2"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.02" numOctaves="2" seed="5" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" id="disp-map-2"/></filter>
+                        <filter id="disp-3"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.02" numOctaves="2" seed="7" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" id="disp-map-3"/></filter>
+                        <filter id="disp-4"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.02" numOctaves="2" seed="9" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" id="disp-map-4"/></filter>
+                        <filter id="disp-5"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.02" numOctaves="2" seed="11" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" id="disp-map-5"/></filter>
+                        <filter id="disp-6"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.02" numOctaves="2" seed="13" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" id="disp-map-6"/></filter>
+                        <filter id="disp-7"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.02" numOctaves="2" seed="15" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" id="disp-map-7"/></filter>
+                    </defs>
+                </svg>
+
+                <div class="gallery-track">
+                    <div class="gallery-h-item tilt-target" data-index="0">
+                        <div class="gallery-h-img-wrap" data-disp="0" style="filter:url(#disp-0)">
+                            <img src="f1.png" alt="Editorial 1">
+                        </div>
+                        <div class="gallery-h-info"><span class="gallery-h-num">01</span><p>Editorial</p></div>
                     </div>
-                    <div class="gallery-item">
-                        <img src="f2.png" alt="Editorial 2">
+                    <div class="gallery-h-item tilt-target" data-index="1">
+                        <div class="gallery-h-img-wrap" data-disp="1" style="filter:url(#disp-1)">
+                            <img src="f2.png" alt="Editorial 2">
+                        </div>
+                        <div class="gallery-h-info"><span class="gallery-h-num">02</span><p>Runway</p></div>
                     </div>
-                    <div class="gallery-item">
-                        <img src="f3.png" alt="Runway">
+                    <div class="gallery-h-item tilt-target" data-index="2">
+                        <div class="gallery-h-img-wrap" data-disp="2" style="filter:url(#disp-2)">
+                            <img src="f3.png" alt="Editorial 3">
+                        </div>
+                        <div class="gallery-h-info"><span class="gallery-h-num">03</span><p>Pasarela</p></div>
                     </div>
-                    <div class="gallery-item tall">
-                        <img src="f4.png" alt="Commercial">
+                    <div class="gallery-h-item tilt-target" data-index="3">
+                        <div class="gallery-h-img-wrap" data-disp="3" style="filter:url(#disp-3)">
+                            <img src="f4.png" alt="Commercial">
+                        </div>
+                        <div class="gallery-h-info"><span class="gallery-h-num">04</span><p>Comercial</p></div>
                     </div>
+                    <div class="gallery-h-item tilt-target" data-index="4">
+                        <div class="gallery-h-img-wrap" data-disp="4" style="filter:url(#disp-4)">
+                            <img src="https://images.unsplash.com/photo-1581044777550-4cfa60707c03?q=80&w=800&auto=format&fit=crop" alt="Editorial 5">
+                        </div>
+                        <div class="gallery-h-info"><span class="gallery-h-num">05</span><p>Editorial</p></div>
+                    </div>
+                    <div class="gallery-h-item tilt-target" data-index="5">
+                        <div class="gallery-h-img-wrap" data-disp="5" style="filter:url(#disp-5)">
+                            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop" alt="Editorial 6">
+                        </div>
+                        <div class="gallery-h-info"><span class="gallery-h-num">06</span><p>Alta Costura</p></div>
+                    </div>
+                    <div class="gallery-h-item tilt-target" data-index="6">
+                        <div class="gallery-h-img-wrap" data-disp="6" style="filter:url(#disp-6)">
+                            <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=800&auto=format&fit=crop" alt="Editorial 7">
+                        </div>
+                        <div class="gallery-h-info"><span class="gallery-h-num">07</span><p>Campaña</p></div>
+                    </div>
+                    <div class="gallery-h-item tilt-target" data-index="7">
+                        <div class="gallery-h-img-wrap" data-disp="7" style="filter:url(#disp-7)">
+                            <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=800&auto=format&fit=crop" alt="Editorial 8">
+                        </div>
+                        <div class="gallery-h-info"><span class="gallery-h-num">08</span><p>Vogue</p></div>
+                    </div>
+                </div>
+
+                <div class="gallery-progress">
+                    <span class="gallery-current">01</span>
+                    <div class="gallery-bar"><div class="gallery-bar-fill"></div></div>
+                    <span class="gallery-total">08</span>
                 </div>
             </section>
 
