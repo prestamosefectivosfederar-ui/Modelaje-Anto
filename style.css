@@ -266,13 +266,13 @@ nav {
 
 .text-stroke {
   fill: none;
-  stroke: #ffffff; /* Brilliant White */
-  stroke-width: 2px; /* Thicker for brilliance */
-  stroke-dasharray: 150 1500;
-  font-size: 200px; /* Absolute Monumental */
-  animation: stroke-trace 8s linear infinite;
-  mix-blend-mode: screen; /* Brighter blending */
-  filter: drop-shadow(0 0 10px #ffffff) drop-shadow(0 0 20px #ffffff); /* Intense glow */
+  stroke: #ffffff;
+  stroke-width: 3px; /* Slightly thicker */
+  stroke-dasharray: 200 1200;
+  font-size: 200px;
+  animation: stroke-trace 10s linear infinite;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
 }
 
 @keyframes stroke-trace {
@@ -427,23 +427,38 @@ nav {
 }
 
 .bio-header {
-  margin-bottom: 60px;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 40px;
+  margin-bottom: 80px;
+  position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 60px;
 }
 
 .bio-main-title {
-  font-size: 3rem;
-  line-height: 1.1;
+  font-size: clamp(4rem, 12vw, 10rem);
+  line-height: 0.85;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.05em;
+  margin: 0;
+  background: linear-gradient(90deg, #ffffff 0%, #a1a1a1 25%, #ffffff 50%, #a1a1a1 75%, #ffffff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
 }
 
 .bio-main-title .outline {
+  display: block;
   color: transparent;
-  -webkit-text-stroke: 1px white;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.5);
+  margin-top: -1vw;
+  transition: all 0.5s ease;
+}
+
+.bio-main-title:hover .outline {
+  -webkit-text-stroke: 1px #ffffff;
+  filter: drop-shadow(0 0 20px rgba(255,255,255,0.3));
 }
 
 .bio-content-grid {
