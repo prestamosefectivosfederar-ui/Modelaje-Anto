@@ -69,6 +69,7 @@ class AntonellaApp {
             this.tryInitStatsParticles();
             this.initFilmGrain();
             this.initOverlays();
+            this.initHeroGridReveal();
         }, 100);
     }
 
@@ -232,6 +233,34 @@ class AntonellaApp {
                 }
             );
         });
+    }
+
+    initHeroGridReveal() {
+        const grid = document.getElementById('hero-grid');
+        if (!grid) return;
+
+        // Create 100 squares (10x10)
+        for (let i = 0; i < 100; i++) {
+            const square = document.createElement('div');
+            square.classList.add('grid-square');
+            grid.appendChild(square);
+        }
+
+        // Animate them out after the loader reveals the page
+        const squares = grid.querySelectorAll('.grid-square');
+        if (typeof gsap !== 'undefined') {
+            gsap.to(squares, {
+                opacity: 0,
+                duration: 0.1, // Short per square
+                stagger: {
+                    amount: 1.5, // Total time to reveal all
+                    from: "random", // Instagram style random reveal or "start"
+                    grid: [10, 10]
+                },
+                ease: "none",
+                delay: 1.2 // After page reveal animation starts
+            });
+        }
     }
 
     initInteractive() {

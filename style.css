@@ -210,7 +210,33 @@ nav {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1; /* Positive Z */
+  z-index: 1;
+}
+
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+
+.hero-grid-reveal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.grid-square {
+  background: black;
+  width: 100%;
+  height: 100%;
 }
 
 #hero-portrait {
