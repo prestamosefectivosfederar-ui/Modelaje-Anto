@@ -275,105 +275,27 @@ class AntonellaApp {
     }
 
     initAboutCanvas() {
-        const section = document.querySelector('.about-stitch');
-        const canvas = document.getElementById('about-canvas');
-        if (!canvas || !section) return;
+        const overlay = document.querySelector('.bio-overlay');
+        const openBtn = document.querySelector('.btn-open-bio');
+        const closeBtn = document.querySelector('.btn-close-bio');
 
-        const ctx = canvas.getContext('2d');
-        const PARTICLE_COUNT = 800;
-        const CELL_SIZE = 20;
+        if (!overlay || !openBtn || !closeBtn) return;
 
-        let particles = [];
-        let flowField = [];
-        let mouseX = null;
-        let mouseY = null;
-        let rafId = null;
-        let frameCount = 0;
-        let cols = 0;
-        let rows = 0;
-
-        const buildFlowField = () => {
-            const t = frameCount * 0.001;
-            flowField = [];
-            for (let r = 0; r < rows; r++) {
-                flowField[r] = [];
-                for (let c = 0; c < cols; c++) {
-                    flowField[r][c] =
-                        Math.sin(c * 0.1 + t) *
-                        Math.cos(r * 0.1 + t * 0.7) *
-                        Math.PI * 4;
-                }
-            }
-        };
-
-        const resize = () => {
-            canvas.width = section.offsetWidth;
-            canvas.height = section.offsetHeight;
-            cols = Math.ceil(canvas.width / CELL_SIZE);
-            rows = Math.ceil(canvas.height / CELL_SIZE);
-            buildFlowField();
-            particles = Array.from(
-                { length: PARTICLE_COUNT },
-                () => new Particle(canvas.width, canvas.height)
-            );
-        };
-
-        const loop = () => {
-            rafId = requestAnimationFrame(loop);
-            frameCount++;
-
-            if (frameCount % 120 === 0) buildFlowField();
-
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.globalCompositeOperation = 'screen';
-
-            particles.forEach(p => {
-                const col = Math.min(Math.floor(p.x / CELL_SIZE), cols - 1);
-                const row = Math.min(Math.floor(p.y / CELL_SIZE), rows - 1);
-                const angle = (flowField[row] && flowField[row][col] !== undefined)
-                    ? flowField[row][col]
-                    : 0;
-                p.update(angle, mouseX, mouseY);
-                p.draw(ctx);
-            });
-        };
-
-        section.addEventListener('mousemove', (e) => {
-            const rect = section.getBoundingClientRect();
-            mouseX = e.clientX - rect.left;
-            mouseY = e.clientY - rect.top;
+        openBtn.addEventListener('click', () => {
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scroll
         });
 
-        section.addEventListener('mouseleave', () => {
-            mouseX = null;
-            mouseY = null;
+        closeBtn.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scroll
         });
 
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(resize, 200);
+        // Close on Escape
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') overlay.classList.remove('active');
+            document.body.style.overflow = '';
         });
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    if (!rafId) loop();
-                } else {
-                    if (rafId) {
-                        cancelAnimationFrame(rafId);
-                        rafId = null;
-                    }
-                }
-            });
-        }, { threshold: 0.05 });
-
-        observer.observe(section);
-
-        resize();
     }
 }
 

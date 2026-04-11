@@ -12,6 +12,7 @@
     <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.162.0/three.min.js"></script>
 </head>
 <body class="loading">
     <div id="loader" class="loader">
@@ -48,89 +49,71 @@
 
         <main>
             <section class="hero">
-                <div class="hero-image-container reveal">
-                    <img src="hero_antonella.png" alt="Antonella Dimenza" class="hero-image">
+                <div class="hero-bg">
+                    <img src="about_model.jpeg" alt="Antonella Dimenza" id="hero-portrait">
                 </div>
+                
                 <div class="hero-content">
-                    <h1 class="split-text">ANTONELLA / DIMENZA</h1>
+                    <div class="name-container">
+                        <svg viewBox="0 0 1600 250" class="hero-svg-text">
+                            <text x="50%" y="80%" text-anchor="middle" class="text-base">ANTONELLA / DIMENZA</text>
+                            <text x="50%" y="80%" text-anchor="middle" class="text-stroke">ANTONELLA / DIMENZA</text>
+                        </svg>
+                    </div>
                     <p class="hero-subtext">Modelo de Alta Costura especializada en campañas Editoriales, de Pasarela y Comerciales en todo el mundo.</p>
+                    <button class="btn-open-bio">BIOGRAFÍA / BIO</button>
                 </div>
+                
                 <div class="scroll-indicator">
                     <div class="mouse"></div>
                     <span>Desliza para explorar</span>
                 </div>
             </section>
 
-            <section class="about-stitch">
-                <canvas id="about-canvas" aria-hidden="true"></canvas>
-                <div class="about-content-layer">
-                    <div class="about-header-main">
-                        <h2 class="ultra-title reveal">QUIEN</h2>
-                        <h2 class="ultra-title outline hide-mobile reveal">SOY?</h2>
-                    </div>
 
-                    <div class="about-grid-layout">
-                        <div class="about-media-staggered">
-                            <div class="media-box pos-1 reveal"><img src="ab1.png" alt="Profile"></div>
-                            <div class="media-box pos-2 reveal"><img src="ab2.png" alt="Dynamic"></div>
-                            <div class="media-box pos-3 reveal"><img src="ab3.png" alt="Artistic"></div>
-                        </div>
-
-                        <div class="about-text-content">
-                            <div class="about-info-block reveal">
-                                <span class="info-num">01.</span>
-                                <h3>Misión & Filosofía</h3>
-                                <p>Antonella Dimenza encarna la intersección entre la estética clásica y la provocación moderna. Cada campaña es una exploración de la forma, la luz y la identidad.</p>
-                            </div>
-                            <div class="about-info-block reveal">
-                                <span class="info-num">02.</span>
-                                <h3>Trayectoria Global</h3>
-                                <p>Con base en Milán y presencia en las principales pasarelas de París y Nueva York, Antonella colabora con directores creativos para elevar narrativas visuales.</p>
-                            </div>
-                            <a href="#" class="btn-archive reveal">Ver Archivo / 2026</a>
-                        </div>
-                    </div>
-
-                    <div class="about-footer-meta">
-                        <div class="meta-item">45.4642° N, 9.1900° E</div>
-                        <div class="meta-item">EDITORIAL / MILAN / SS26</div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="stats">
-                <div class="stats-layout">
-                    <div class="stats-image-container reveal">
-                        <img src="stats_portrait.png" alt="Portrait" class="stats-image">
-                    </div>
-                    <div class="stats-container">
-                        <div class="stat-item">
-                            <span class="stat-label">Altura</span>
+            <section class="stats-premium">
+                <div class="stats-sandwich-layout">
+                    <!-- Grid 1: Left Side Stats -->
+                    <div class="stats-data-column left">
+                        <div class="stat-item reveal">
+                            <span class="stat-label">ALTURA</span>
                             <span class="stat-value">178 cm / 5'10"</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Busto</span>
-                            <span class="stat-value">84 cm / 33"</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Cintura</span>
+                        <div class="stat-item reveal">
+                            <span class="stat-label">CINTURA</span>
                             <span class="stat-value">60 cm / 23.5"</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Cadera</span>
-                            <span class="stat-value">89 cm / 35"</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Calzado</span>
+                        <div class="stat-item reveal">
+                            <span class="stat-label">CALZADO</span>
                             <span class="stat-value">39 EU / 8 US</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Ojos</span>
-                            <span class="stat-value">Verdes</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Cabello</span>
+                        <div class="stat-item reveal">
+                            <span class="stat-label">CABELLO</span>
                             <span class="stat-value">Castaño</span>
+                        </div>
+                    </div>
+
+                    <!-- Center: Visual Particles -->
+                    <div class="stats-central-particles">
+                        <canvas id="particles-stats"></canvas>
+                        <div class="floating-portrait reveal">
+                            <img src="stats_portrait.png" alt="Portrait">
+                        </div>
+                    </div>
+
+                    <!-- Grid 2: Right Side Stats -->
+                    <div class="stats-data-column right">
+                        <div class="stat-item reveal">
+                            <span class="stat-label">BUSTO</span>
+                            <span class="stat-value">84 cm / 33"</span>
+                        </div>
+                        <div class="stat-item reveal">
+                            <span class="stat-label">CADERA</span>
+                            <span class="stat-value">89 cm / 35"</span>
+                        </div>
+                        <div class="stat-item reveal">
+                            <span class="stat-label">OJOS</span>
+                            <span class="stat-value">Verdes</span>
                         </div>
                     </div>
                 </div>
@@ -153,6 +136,7 @@
                     </div>
                 </div>
             </section>
+
 
             <section class="services">
                 <div class="services-header">
@@ -228,9 +212,47 @@
                 </div>
             </section>
         </main>
-
-        <div class="cursor"></div>
     </div>
+
+    <!-- Bio Overlay -->
+    <div class="bio-overlay" data-lenis-prevent>
+        <button class="btn-close-bio">&#x2715;</button>
+        <div class="bio-overlay-inner">
+            <header class="bio-header">
+                <h2 class="bio-main-title">ANTONELLA <br> <span class="outline">DIMENZA</span></h2>
+            </header>
+
+            <div class="bio-content-grid">
+                <div class="bio-images">
+                    <div class="bio-img-big"><img src="ab1.png" alt="Profile"></div>
+                    <div class="bio-img-small-row">
+                        <img src="ab2.png" alt="Dynamic">
+                        <img src="ab3.png" alt="Artistic">
+                    </div>
+                </div>
+
+                <div class="bio-text">
+                    <div class="bio-section">
+                        <span class="bio-tag">01 / FILOSOFÍA</span>
+                        <p>Antonella Dimenza encarna la intersección entre la estética clásica y la provocación moderna. Cada campaña es una exploración de la forma, la luz y la identidad personal.</p>
+                    </div>
+                    <div class="bio-section">
+                        <span class="bio-tag">02 / TRAYECTORIA</span>
+                        <p>Con base en Milán y presencia en las principales pasarelas de París y Nueva York, Antonella colabora con directores creativos para elevar narrativas visuales de alto impacto.</p>
+                    </div>
+                    <div class="bio-footer">
+                        <div class="bio-meta">
+                            <span>MODELO PROFESIONAL</span>
+                            <span>EDITORIAL / PASARELA</span>
+                        </div>
+                        <a href="mailto:booking@antonelladimenza.com" class="btn-archive">Solicitar Booking</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cursor"></div>
     <script type="module" src="/main.js"></script>
 </body>
 </html>
