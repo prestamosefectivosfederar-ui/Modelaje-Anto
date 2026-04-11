@@ -161,38 +161,66 @@
     </div>
 
     <!-- Contact Overlay -->
-    <div class="contact-overlay" data-lenis-prevent>
+    <div class="contact-overlay" id="contact-overlay" data-lenis-prevent>
         <button class="btn-close-contact">&#x2715;</button>
-        <div class="contact-overlay-inner">
-            <div class="contact-header">
-                <span class="section-tag">/ CONTACTO</span>
-                <h2 class="contact-main-title">CONTRATACIONES <br> & <span class="outline">CONSULTAS</span></h2>
-            </div>
+        <div class="contact-grid">
+            <div class="contact-info">
+                <span class="section-tag">/ BOOKING & INQUIRIES</span>
+                <h2 class="contact-main-title">CONTRATACIONES & <br> <span class="outline">CONSULTAS</span></h2>
+                
+                <form class="booking-form">
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>NOMBRE / AGENCIA</label>
+                            <input type="text" placeholder="Tu nombre o agencia...">
+                        </div>
+                        <div class="input-group">
+                            <label>TIPO DE PROYECTO</label>
+                            <select>
+                                <option>Editorial / Revista</option>
+                                <option>Runway / Desfile</option>
+                                <option>Campaña Comercial</option>
+                                <option>Social Media / Influencer</option>
+                                <option>Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>FECHA TENTATIVA</label>
+                            <input type="date">
+                        </div>
+                        <div class="input-group">
+                            <label>UBICACIÓN</label>
+                            <input type="text" placeholder="Ciudad / País">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>MENSAJE</label>
+                        <textarea rows="4" placeholder="Cuéntame sobre el proyecto..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-premium">ENVIAR SOLICITUD</button>
+                </form>
 
-            <div class="contact-grid">
-                <div class="contact-info">
+                <div class="contact-footer">
                     <div class="contact-block">
                         <span class="contact-block-label">DIRECTO</span>
                         <a href="mailto:booking@antonelladimenza.com" class="contact-big-link">booking@antonelladimenza.com</a>
                     </div>
                     <div class="contact-block">
-                        <span class="contact-block-label">SOCIAL</span>
-                        <div class="social-links">
-                            <a href="#" target="_blank">INSTAGRAM</a>
-                            <a href="#" target="_blank">LINKEDIN</a>
-                            <a href="#" target="_blank">WHATSAPP</a>
-                        </div>
+                        <span class="contact-block-label">BASE</span>
+                        <p class="contact-status-text">Milán / Disponibilidad: Global</p>
                     </div>
-                    <div class="contact-block">
-                        <span class="contact-block-label">LOCATION</span>
-                        <p>Milán, Italia / Disponible Globalmente</p>
+                    <div class="social-links">
+                        <a href="#">INSTAGRAM</a>
+                        <a href="#">LINKEDIN</a>
+                        <a href="#">WHATSAPP</a>
                     </div>
                 </div>
-                
-                <div class="contact-media">
-                    <div class="contact-img-wrap reveal">
-                        <img src="contact_model.png" alt="Antonella Dimenza Contact">
-                    </div>
+            </div>
+            <div class="contact-image-pane">
+                <div class="contact-image-wrap">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop" alt="Editorial Fashion">
                 </div>
             </div>
         </div>
