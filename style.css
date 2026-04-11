@@ -763,6 +763,32 @@ nav {
   height: 100vh;
   overflow: hidden;
   background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gallery-header {
+  padding: 0 4vw;
+  margin-bottom: 60px;
+}
+
+.gallery-eyebrow {
+  display: block;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: #c8a96e;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.gallery-title {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: white;
 }
 
 .gallery-track {
