@@ -580,30 +580,34 @@ nav {
   letter-spacing: 0.1em;
 }
 
-.btn-archive {
+.btn-premium {
   display: block;
   text-align: center;
   font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #000;
-  background: #fff;
+  color: #000 !important;
+  background: #fff !important;
   text-decoration: none;
   padding: 25px 50px;
-  margin-top: 30px;
   transition: all 0.4s ease;
   border-radius: 2px;
-  width: 100%;
   cursor: pointer;
   border: none;
-  opacity: 1 !important;
+  width: fit-content;
+  margin: 0 auto;
 }
 
-.btn-archive:hover {
-  background: #a1a1a1;
+.btn-premium:hover {
+  background: #a1a1a1 !important;
   transform: translateY(-5px);
   box-shadow: 0 20px 40px rgba(255,255,255,0.1);
+}
+
+.btn-archive {
+  width: 100%;
+  margin-top: 30px;
 }
 
 @media (max-width: 900px) {
@@ -1064,25 +1068,32 @@ nav {
   -webkit-text-stroke: 1px white;
 }
 
-.btn-cta-main {
-  background: white;
-  color: black;
-  border: none;
-  padding: 25px 60px;
+.btn-premium {
+  display: block;
+  text-align: center;
   font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  cursor: pointer;
+  color: #000 !important;
+  background: #fff !important;
+  text-decoration: none;
+  padding: 25px 50px;
   transition: all 0.4s ease;
   border-radius: 2px;
-  opacity: 1 !important; /* Force visibility */
+  cursor: pointer;
+  border: none;
+  width: 100%;
 }
 
-.btn-cta-main:hover {
-  background: #a1a1a1;
-  transform: scale(1.05);
-  box-shadow: 0 20px 50px rgba(255,255,255,0.2);
+.btn-premium:hover {
+  background: #a1a1a1 !important;
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(255,255,255,0.2);
+}
+
+.btn-archive {
+  margin-top: 30px;
 }
 
 .contact-grid {
