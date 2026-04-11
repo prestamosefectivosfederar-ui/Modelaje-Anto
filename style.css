@@ -1271,8 +1271,31 @@ nav {
   position: static !important;
 }
 
-/* GSAP Reveal States - No longer forcing 0 opacity in CSS to prevent stuck states */
-.reveal {
-  opacity: 1; /* GSAP will hide it internally on start */
-  will-change: transform, opacity;
+/* FINAL OVERRIDE FOR PREMIUM BUTTONS */
+.btn-premium {
+  display: block !important;
+  text-align: center !important;
+  font-size: 1.1rem !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.3em !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  text-decoration: none !important;
+  padding: 30px 50px !important;
+  transition: all 0.4s ease !important;
+  border-radius: 0 !important;
+  cursor: pointer !important;
+  border: none !important;
+  width: 100% !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-premium:hover {
+  background-color: #eeeeee !important;
+  background: #eeeeee !important;
+  transform: translateY(-5px) !important;
+  box-shadow: 0 20px 40px rgba(255,255,255,0.3) !important;
 }
