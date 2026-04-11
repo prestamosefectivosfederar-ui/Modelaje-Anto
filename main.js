@@ -1,5 +1,280 @@
 // Antonella Portfolio - Lusion.co Style Experience
-// Resilient Version - Handling external libraries gracefully
+
+// ============================================================
+// FluidParticles — Three.js GLSL shader particles for hero
+// ============================================================
+class FluidParticles {
+    constructor(container) {
+        this.container = container;
+        this.mouse = { nx: 0, ny: 0 };
+        this._raf = null;
+        this._init();
+    }
+
+    _init() {
+        const w = this.container.offsetWidth;
+        const h = this.container.offsetHeight;
+
+        this.canvas = document.createElement('canvas');
+        this.canvas.style.cssText = [
+            'position:absolute', 'inset:0', 'width:100%', 'height:100%',
+            'pointer-events:none', 'z-index:3'
+        ].join(';');
+        this.container.appendChild(this.canvas);
+
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: false });
+        this.renderer.setSize(w, h);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 100);
+        this.camera.position.z = 3;
+
+        this._createParticles();
+        this._bindEvents();
+        this._tick();
+    }
+
+    _createParticles() {
+        const COUNT = 280;
+        const positions = new Float32Array(COUNT * 3);
+        const randoms   = new Float32Array(COUNT);
+
+        for (let i = 0; i < COUNT; i++) {
+            positions[i * 3]     = (Math.random() - 0.5) * 9;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 5.5;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 1.5;
+            randoms[i] = Math.random();
+        }
+
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geo.setAttribute('aRandom',  new THREE.BufferAttribute(randoms, 1));
+
+        const vertexShader = `
+            attribute float aRandom;
+            uniform float uTime;
+            uniform vec2  uMouse;
+            varying float vAlpha;
+
+            void main() {
+                vec3 pos = position;
+
+                pos.x += sin(uTime * 0.35 + aRandom * 6.283) * 0.09;
+                pos.y += cos(uTime * 0.28 + aRandom * 6.283) * 0.07;
+
+                vec2 toMouse = pos.xy - uMouse * vec2(4.5, 2.7);
+                float dist   = length(toMouse);
+                float strength = smoothstep(1.4, 0.0, dist) * 0.7;
+                pos.xy += normalize(toMouse + vec2(0.001)) * strength;
+
+                vAlpha = 0.25 + aRandom * 0.55;
+
+                vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
+                gl_PointSize = (1.8 + aRandom * 2.2) * (280.0 / -mvPos.z);
+                gl_Position  = projectionMatrix * mvPos;
+            }
+        `;
+
+        const fragmentShader = `
+            varying float vAlpha;
+            void main() {
+                vec2  uv  = gl_PointCoord - 0.5;
+                float d   = length(uv);
+                float cir = 1.0 - smoothstep(0.28, 0.5, d);
+                if (cir < 0.01) discard;
+                gl_FragColor = vec4(0.784, 0.663, 0.431, vAlpha * cir);
+            }
+        `;
+
+        this.mat = new THREE.ShaderMaterial({
+            vertexShader,
+            fragmentShader,
+            uniforms: {
+                uTime:  { value: 0 },
+                uMouse: { value: new THREE.Vector2(0, 0) }
+            },
+            transparent: true,
+            depthWrite:  false,
+            blending:    THREE.AdditiveBlending
+        });
+
+        this.points = new THREE.Points(geo, this.mat);
+        this.scene.add(this.points);
+    }
+
+    _bindEvents() {
+        window.addEventListener('mousemove', (e) => {
+            const rect = this.container.getBoundingClientRect();
+            this.mouse.nx =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+            this.mouse.ny = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+        });
+
+        window.addEventListener('resize', () => {
+            const w = this.container.offsetWidth;
+            const h = this.container.offsetHeight;
+            this.camera.aspect = w / h;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(w, h);
+        });
+    }
+
+    _tick() {
+        this._raf = requestAnimationFrame(() => this._tick());
+        if (this.mat) {
+            this.mat.uniforms.uTime.value  += 0.016;
+            this.mat.uniforms.uMouse.value.set(this.mouse.nx, this.mouse.ny);
+        }
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    destroy() {
+        cancelAnimationFrame(this._raf);
+        this.renderer.dispose();
+        if (this.canvas.parentNode) this.canvas.parentNode.removeChild(this.canvas);
+    }
+}
+
+// ============================================================
+// MagneticElement — cursor magnético en botones y links
+// ============================================================
+class MagneticElement {
+    constructor(el, strength = 0.38) {
+        this.el = el;
+        this.strength = strength;
+        this.bounds = null;
+        this._onMove  = this._onMove.bind(this);
+        this._onLeave = this._onLeave.bind(this);
+        this._addListeners();
+    }
+
+    _addListeners() {
+        this.el.addEventListener('mouseenter', () => {
+            this.bounds = this.el.getBoundingClientRect();
+        });
+        this.el.addEventListener('mousemove',  this._onMove);
+        this.el.addEventListener('mouseleave', this._onLeave);
+    }
+
+    _onMove(e) {
+        if (!this.bounds) this.bounds = this.el.getBoundingClientRect();
+        const cx = this.bounds.left + this.bounds.width  / 2;
+        const cy = this.bounds.top  + this.bounds.height / 2;
+        const dx = (e.clientX - cx) * this.strength;
+        const dy = (e.clientY - cy) * this.strength;
+        if (typeof gsap !== 'undefined') {
+            gsap.to(this.el, { x: dx, y: dy, duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
+        }
+    }
+
+    _onLeave() {
+        if (typeof gsap !== 'undefined') {
+            gsap.to(this.el, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.45)', overwrite: 'auto' });
+        }
+        this.bounds = null;
+    }
+
+    static applyAll() {
+        document.querySelectorAll('button, nav a, .footer-links span').forEach(el => {
+            new MagneticElement(el);
+        });
+    }
+}
+
+// ============================================================
+// TiltEffect — inclinación 3D en hover
+// ============================================================
+class TiltEffect {
+    constructor(el, maxTilt = 14) {
+        this.el  = el;
+        this.max = maxTilt;
+        this._addListeners();
+    }
+
+    _addListeners() {
+        this.el.addEventListener('mousemove', (e) => {
+            const rect = this.el.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top)  / rect.height;
+            const rotY =  (x - 0.5) * this.max * 2;
+            const rotX = -(y - 0.5) * this.max * 2;
+
+            this.el.style.setProperty('--hx', `${x * 100}%`);
+            this.el.style.setProperty('--hy', `${y * 100}%`);
+
+            if (typeof gsap !== 'undefined') {
+                gsap.to(this.el, {
+                    rotateX: rotX,
+                    rotateY: rotY,
+                    transformPerspective: 800,
+                    duration: 0.4,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                });
+            }
+        });
+
+        this.el.addEventListener('mouseleave', () => {
+            if (typeof gsap !== 'undefined') {
+                gsap.to(this.el, {
+                    rotateX: 0,
+                    rotateY: 0,
+                    duration: 0.7,
+                    ease: 'power3.out',
+                    overwrite: 'auto'
+                });
+            }
+        });
+    }
+
+    static applyAll(selector = '.gallery-h-item, .service-item') {
+        document.querySelectorAll(selector).forEach(el => new TiltEffect(el));
+    }
+}
+
+// ============================================================
+// HorizontalGallery — scroll horizontal pinned con GSAP
+// ============================================================
+class HorizontalGallery {
+    constructor() {
+        this.section   = document.querySelector('.gallery-horizontal');
+        this.track     = document.querySelector('.gallery-track');
+        this.currentEl = document.querySelector('.gallery-current');
+        this.fillEl    = document.querySelector('.gallery-bar-fill');
+        if (!this.section || !this.track) return;
+        this._init();
+    }
+
+    _init() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+        const items      = this.track.querySelectorAll('.gallery-h-item');
+        const totalItems = items.length;
+
+        gsap.to(this.track, {
+            x: () => -(this.track.scrollWidth - window.innerWidth + 160),
+            ease: 'none',
+            scrollTrigger: {
+                trigger:             this.section,
+                start:               'top top',
+                end:                 () => `+=${this.track.scrollWidth - window.innerWidth + 160}`,
+                pin:                 true,
+                scrub:               1.2,
+                anticipatePin:       1,
+                invalidateOnRefresh: true,
+                onUpdate: (self) => {
+                    const idx = Math.round(self.progress * (totalItems - 1));
+                    if (this.currentEl) {
+                        this.currentEl.textContent = String(idx + 1).padStart(2, '0');
+                    }
+                    if (this.fillEl) {
+                        this.fillEl.style.transform = `scaleX(${self.progress})`;
+                    }
+                }
+            }
+        });
+    }
+}
 
 class Particle {
     constructor(canvasWidth, canvasHeight) {
@@ -63,13 +338,21 @@ class AntonellaApp {
         
         // Use a small delay to ensure CDNs are parsed
         setTimeout(() => {
+            // Partículas Three.js en el hero
+            if (typeof THREE !== 'undefined') {
+                const heroSection = document.querySelector('.hero');
+                if (heroSection) this.fluidParticles = new FluidParticles(heroSection);
+            }
             this.tryInitLenis();
             this.initGSAP();
             this.initInteractive();
             this.tryInitStatsParticles();
             this.initFilmGrain();
             this.initOverlays();
-            this.initHeroGridReveal();
+            this.initDisplacement();
+            new HorizontalGallery();
+            MagneticElement.applyAll();
+            TiltEffect.applyAll();
         }, 100);
     }
 
@@ -186,13 +469,55 @@ class AntonellaApp {
         render();
     }
 
+    _splitTitleLetters() {
+        document.querySelectorAll('.hero-title-line[data-split]').forEach(line => {
+            const text = line.textContent.trim();
+            line.textContent = '';
+            text.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.textContent = char === ' ' ? '\u00A0' : char;
+                line.appendChild(span);
+            });
+        });
+    }
+
     animateHero() {
         if (typeof gsap === 'undefined') return;
-        const tl = gsap.timeline();
-        // Ensure elements are visible by using fromTo
-        tl.fromTo(".hero-image-container", { scale: 1.2, opacity: 0 }, { scale: 1, opacity: 0.3, duration: 2, ease: "expo.out" }, 0);
-        tl.fromTo(".clipped-title", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, 0.5);
-        tl.fromTo(".hero-subtext", { y: 20, opacity: 0 }, { y: 0, opacity: 0.7, duration: 1, ease: "power3.out" }, 1);
+
+        this._splitTitleLetters();
+
+        const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+        tl.fromTo('.hero-eyebrow',
+            { y: 16, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.8 },
+            0
+        );
+
+        tl.to('.hero-title-line span', {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.035
+        }, 0.15);
+
+        tl.fromTo('.hero-divider',
+            { width: 0 },
+            { width: 50, duration: 0.8, ease: 'expo.out' },
+            0.5
+        );
+
+        tl.fromTo('.hero-subtext',
+            { y: 20, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.7 },
+            0.7
+        );
+
+        tl.fromTo('.btn-hero-cta',
+            { y: 16, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.6 },
+            0.9
+        );
     }
 
     initGSAP() {
@@ -218,7 +543,7 @@ class AntonellaApp {
         });
 
         // Parallax Effect
-        document.querySelectorAll('.hero-image, .stats-image, .gallery-item img, .media-box img, .contact-image, .floating-portrait img').forEach(img => {
+        document.querySelectorAll('.stats-image, .media-box img, .contact-image').forEach(img => {
             gsap.fromTo(img, 
                 { y: "-15%" }, 
                 { 
@@ -235,64 +560,47 @@ class AntonellaApp {
         });
     }
 
-    initHeroGridReveal() {
-        const grid = document.getElementById('hero-grid');
-        if (!grid) return;
+    initDisplacement() {
+        document.querySelectorAll('.gallery-h-img-wrap[data-disp]').forEach(wrap => {
+            const idx   = wrap.getAttribute('data-disp');
+            const mapEl = document.getElementById(`disp-map-${idx}`);
+            if (!mapEl) return;
 
-        // Create 15 vertical bars for better width
-        grid.innerHTML = ''; // Clear previous
-        grid.style.gridTemplateColumns = 'repeat(15, 1fr)';
-        grid.style.gridTemplateRows = '1fr';
+            let current = 0;
+            let target  = 0;
+            let rafId   = null;
 
-        for (let i = 0; i < 15; i++) {
-            const bar = document.createElement('div');
-            bar.classList.add('grid-square');
-            grid.appendChild(bar);
-        }
+            const lerp = (a, b, t) => a + (b - a) * t;
 
-        // Animate them out bar by bar with a light sweep feel
-        const bars = grid.querySelectorAll('.grid-square');
-        if (typeof gsap !== 'undefined') {
-            gsap.to(bars, {
-                scaleX: 0,
-                transformOrigin: "right",
-                duration: 1.5,
-                stagger: {
-                    amount: 1.2,
-                    from: "start"
-                },
-                ease: "expo.inOut",
-                delay: 1.5,
-                opacity: 0.8
+            const animate = () => {
+                current = lerp(current, target, 0.08);
+                mapEl.setAttribute('scale', current.toFixed(2));
+                if (Math.abs(current - target) > 0.1) {
+                    rafId = requestAnimationFrame(animate);
+                } else {
+                    mapEl.setAttribute('scale', target);
+                    rafId = null;
+                }
+            };
+
+            wrap.addEventListener('mouseenter', () => {
+                target = 22;
+                if (!rafId) rafId = requestAnimationFrame(animate);
             });
-            
-            // Light Sweep Animation
-            gsap.fromTo(".light-sweep", 
-                { left: "-20%", opacity: 0 }, 
-                { 
-                    left: "120%", 
-                    opacity: 1, 
-                    duration: 2.5, 
-                    delay: 1.5, 
-                    ease: "power2.inOut" 
-                }
-            );
 
-            // Intense Flash on the portrait
-            gsap.fromTo("#hero-portrait", 
-                { 
-                    filter: "brightness(5) contrast(1.5) grayscale(1)",
-                    scale: 1.05
-                }, 
-                { 
-                    filter: "brightness(0.6) contrast(1) grayscale(0)", 
-                    scale: 1,
-                    duration: 2.5, 
-                    delay: 2.2, 
-                    ease: "power3.out" 
-                }
-            );
-        }
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top)  / rect.height;
+                target = 14 + Math.abs(x - 0.5) * 20 + Math.abs(y - 0.5) * 20;
+                if (!rafId) rafId = requestAnimationFrame(animate);
+            });
+
+            wrap.addEventListener('mouseleave', () => {
+                target = 0;
+                if (!rafId) rafId = requestAnimationFrame(animate);
+            });
+        });
     }
 
     initInteractive() {
