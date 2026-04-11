@@ -259,20 +259,21 @@ nav {
 }
 
 .text-base {
-  fill: rgba(255, 255, 255, 0.05); /* Even stealthier base */
-  font-size: 200px; /* Absolute Monumental */
-  mix-blend-mode: overlay;
+  fill: #ffffff;
+  font-size: 160px; /* Slightly smaller for better container breathing */
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .text-stroke {
   fill: none;
-  stroke: #ffffff;
-  stroke-width: 3px; /* Slightly thicker */
-  stroke-dasharray: 200 1200;
-  font-size: 200px;
-  animation: stroke-trace 10s linear infinite;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1px;
+  font-size: 180px;
   mix-blend-mode: screen;
-  filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
+  filter: blur(8px); /* Subtle glow foundation */
+  animation: breathe 4s ease-in-out infinite;
 }
 
 @keyframes stroke-trace {
