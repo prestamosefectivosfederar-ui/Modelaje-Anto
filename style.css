@@ -763,7 +763,7 @@ nav {
   height: 100vh;
   overflow: hidden;
   background: #000;
-  padding-top: 80px; /* Reduced top offset drastically */
+  padding-top: 180px; /* Clear section transition from Hero */
   display: flex;
   flex-direction: column;
 }
