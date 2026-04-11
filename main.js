@@ -239,27 +239,43 @@ class AntonellaApp {
         const grid = document.getElementById('hero-grid');
         if (!grid) return;
 
-        // Create 20 vertical bars
-        for (let i = 0; i < 20; i++) {
+        // Create 15 vertical bars for better width
+        grid.innerHTML = ''; // Clear previous
+        grid.style.gridTemplateColumns = 'repeat(15, 1fr)';
+        grid.style.gridTemplateRows = '1fr';
+
+        for (let i = 0; i < 15; i++) {
             const bar = document.createElement('div');
             bar.classList.add('grid-square');
             grid.appendChild(bar);
         }
 
-        // Animate them out bar by bar
+        // Animate them out bar by bar with a light sweep feel
         const bars = grid.querySelectorAll('.grid-square');
         if (typeof gsap !== 'undefined') {
             gsap.to(bars, {
-                scaleY: 0,
-                transformOrigin: "top",
-                duration: 1.2,
+                scaleX: 0,
+                transformOrigin: "right",
+                duration: 1.5,
                 stagger: {
-                    amount: 1, // Total duration for all bars to clear
+                    amount: 1.2,
                     from: "start"
                 },
                 ease: "expo.inOut",
-                delay: 1.2
+                delay: 1.5,
+                opacity: 0.8
             });
+            
+            // Subtle flash when all bars disappear
+            gsap.fromTo("#hero-portrait", 
+                { filter: "brightness(2) contrast(1.2) grayscale(1)" }, 
+                { 
+                    filter: "brightness(0.6) contrast(1) grayscale(0)", 
+                    duration: 2, 
+                    delay: 2.2, 
+                    ease: "power2.out" 
+                }
+            );
         }
     }
 
