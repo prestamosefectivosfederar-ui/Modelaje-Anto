@@ -1,6 +1,61 @@
 // Antonella Portfolio - Lusion.co Style Experience
 // Resilient Version - Handling external libraries gracefully
 
+class Particle {
+    constructor(canvasWidth, canvasHeight) {
+        this.cw = canvasWidth;
+        this.ch = canvasHeight;
+        this.reset();
+    }
+
+    reset() {
+        this.x = Math.random() * this.cw;
+        this.y = Math.random() * this.ch;
+        this.vx = 0;
+        this.vy = 0;
+        this.speed = 0.5 + Math.random() * 1.0;
+        const alpha = 0.4 + Math.random() * 0.4;
+        const rg = 150 + Math.floor(Math.random() * 70);
+        const b = 200 + Math.floor(Math.random() * 55);
+        this.color = `rgba(${rg},${rg + 20},${b},${alpha})`;
+    }
+
+    update(flowAngle, mouseX, mouseY) {
+        this.vx += Math.cos(flowAngle) * 0.05;
+        this.vy += Math.sin(flowAngle) * 0.05;
+
+        if (mouseX !== null) {
+            const dx = this.x - mouseX;
+            const dy = this.y - mouseY;
+            const distSq = dx * dx + dy * dy;
+            const radius = 150;
+            if (distSq < radius * radius && distSq > 0) {
+                const dist = Math.sqrt(distSq);
+                const force = (1 - dist / radius) * 3.0;
+                this.vx += (dx / dist) * force * 0.1;
+                this.vy += (dy / dist) * force * 0.1;
+            }
+        }
+
+        this.vx *= 0.95;
+        this.vy *= 0.95;
+
+        this.x += this.vx * this.speed;
+        this.y += this.vy * this.speed;
+
+        if (this.x < -5 || this.x > this.cw + 5 || this.y < -5 || this.y > this.ch + 5) {
+            this.reset();
+        }
+    }
+
+    draw(ctx) {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
 class AntonellaApp {
     constructor() {
         console.log('AntonellaApp: Initializing...');
@@ -13,6 +68,7 @@ class AntonellaApp {
             this.initInteractive();
             this.tryInitStatsParticles();
             this.initFilmGrain();
+            this.initAboutCanvas();
         }, 100);
     }
 
@@ -216,6 +272,108 @@ class AntonellaApp {
             };
             anim();
         } catch (e) { console.error(e); }
+    }
+
+    initAboutCanvas() {
+        const section = document.querySelector('.about-stitch');
+        const canvas = document.getElementById('about-canvas');
+        if (!canvas || !section) return;
+
+        const ctx = canvas.getContext('2d');
+        const PARTICLE_COUNT = 800;
+        const CELL_SIZE = 20;
+
+        let particles = [];
+        let flowField = [];
+        let mouseX = null;
+        let mouseY = null;
+        let rafId = null;
+        let frameCount = 0;
+        let cols = 0;
+        let rows = 0;
+
+        const buildFlowField = () => {
+            const t = frameCount * 0.001;
+            flowField = [];
+            for (let r = 0; r < rows; r++) {
+                flowField[r] = [];
+                for (let c = 0; c < cols; c++) {
+                    flowField[r][c] =
+                        Math.sin(c * 0.1 + t) *
+                        Math.cos(r * 0.1 + t * 0.7) *
+                        Math.PI * 4;
+                }
+            }
+        };
+
+        const resize = () => {
+            canvas.width = section.offsetWidth;
+            canvas.height = section.offsetHeight;
+            cols = Math.ceil(canvas.width / CELL_SIZE);
+            rows = Math.ceil(canvas.height / CELL_SIZE);
+            buildFlowField();
+            particles = Array.from(
+                { length: PARTICLE_COUNT },
+                () => new Particle(canvas.width, canvas.height)
+            );
+        };
+
+        const loop = () => {
+            rafId = requestAnimationFrame(loop);
+            frameCount++;
+
+            if (frameCount % 120 === 0) buildFlowField();
+
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.globalCompositeOperation = 'screen';
+
+            particles.forEach(p => {
+                const col = Math.min(Math.floor(p.x / CELL_SIZE), cols - 1);
+                const row = Math.min(Math.floor(p.y / CELL_SIZE), rows - 1);
+                const angle = (flowField[row] && flowField[row][col] !== undefined)
+                    ? flowField[row][col]
+                    : 0;
+                p.update(angle, mouseX, mouseY);
+                p.draw(ctx);
+            });
+        };
+
+        section.addEventListener('mousemove', (e) => {
+            const rect = section.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        });
+
+        section.addEventListener('mouseleave', () => {
+            mouseX = null;
+            mouseY = null;
+        });
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(resize, 200);
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (!rafId) loop();
+                } else {
+                    if (rafId) {
+                        cancelAnimationFrame(rafId);
+                        rafId = null;
+                    }
+                }
+            });
+        }, { threshold: 0.05 });
+
+        observer.observe(section);
+
+        resize();
     }
 }
 
