@@ -610,3 +610,74 @@ if (document.readyState === 'loading') {
 } else {
     new AntonellaApp();
 }
+
+// ============================================================
+// PortfolioExpand — despliega/colapsa items por sección
+// ============================================================
+class PortfolioExpand {
+    constructor() {
+        document.querySelectorAll('.portfolio-grid[data-limit]').forEach(grid => {
+            this._init(grid);
+        });
+    }
+
+    _init(grid) {
+        const limit   = parseInt(grid.dataset.limit, 10);
+        const items   = Array.from(grid.querySelectorAll('.portfolio-item'));
+        const total   = items.length;
+        const hidden  = items.slice(limit);
+        const section = grid.closest('.portfolio-section');
+        const btn     = section ? section.querySelector('.portfolio-toggle') : null;
+
+        // Actualizar contador en el botón
+        if (btn) {
+            const countEl = btn.querySelector('.toggle-count');
+            if (countEl && total > limit) {
+                countEl.textContent = `+${total - limit}`;
+            }
+            // Ocultar botón si no hay más items
+            if (total <= limit) {
+                btn.closest('.portfolio-expand-bar').style.display = 'none';
+            }
+        }
+
+        // Ocultar items que superan el límite
+        hidden.forEach(item => item.classList.add('is-hidden'));
+
+        if (!btn || total <= limit) return;
+
+        let expanded = false;
+
+        btn.addEventListener('click', () => {
+            expanded = !expanded;
+
+            if (expanded) {
+                // Revelar con stagger
+                hidden.forEach((item, i) => {
+                    item.classList.remove('is-hidden');
+                    item.style.animationDelay = `${i * 60}ms`;
+                    item.classList.add('is-revealing');
+                    item.addEventListener('animationend', () => {
+                        item.classList.remove('is-revealing');
+                        item.style.animationDelay = '';
+                    }, { once: true });
+                });
+
+                btn.querySelector('.toggle-label').textContent = 'COLAPSAR';
+                btn.querySelector('.toggle-count').textContent = '';
+                btn.classList.add('is-expanded');
+            } else {
+                // Colapsar: scroll suave al inicio de la sección antes de ocultar
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    hidden.forEach(item => item.classList.add('is-hidden'));
+                    btn.querySelector('.toggle-label').textContent = 'VER TODOS';
+                    btn.querySelector('.toggle-count').textContent = `+${total - limit}`;
+                    btn.classList.remove('is-expanded');
+                }, 500);
+            }
+        });
+    }
+}
+
+new PortfolioExpand();
