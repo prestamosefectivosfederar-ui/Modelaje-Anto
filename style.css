@@ -583,17 +583,21 @@ nav {
 .btn-archive {
   display: block;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.2em;
   color: #000;
   background: #fff;
   text-decoration: none;
-  padding: 24px;
+  padding: 25px 50px;
   margin-top: 30px;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s ease;
   border-radius: 2px;
+  width: 100%;
+  cursor: pointer;
+  border: none;
+  opacity: 1 !important;
 }
 
 .btn-archive:hover {
