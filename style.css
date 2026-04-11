@@ -257,9 +257,9 @@ nav {
 
 .hero-title-line {
   display: block;
-  overflow: hidden;
+  position: relative;
   white-space: nowrap;
-  padding-bottom: 0.06em;
+  padding: 0.1em 0; /* Vertical breathing room */
 }
 
 .hero-title-line span {
@@ -1342,12 +1342,13 @@ nav {
   will-change: transform, filter;
 }
 
-/* Base Hover */
+/* PURE ZOOM HOVER - NO DEFORMATION */
 .project-card:hover .project-image,
 .bio-img-big:hover img,
 .bio-img-small:hover img,
-.contact-image-wrap:hover img {
-  transform: scale(1.15);
+.contact-image-wrap:hover img,
+.gallery-h-item:hover .gallery-h-img-wrap img {
+  transform: scale(1.1);
   filter: grayscale(0%) brightness(1.1);
 }
 
