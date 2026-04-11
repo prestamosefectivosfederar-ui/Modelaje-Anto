@@ -761,17 +761,19 @@ nav {
 .gallery-horizontal {
   position: relative;
   height: 100vh;
+  width: 100%;
   overflow: hidden;
   background: #000;
-  padding-top: 180px; /* Clear section transition from Hero */
   display: flex;
   flex-direction: column;
+  justify-content: center; /* Center everything vertically in the 100vh */
+  padding: 60px 0;
 }
 
 .gallery-header {
   padding: 0 4vw;
-  margin-bottom: 20px; /* Minimal gap for impactful connection */
-  z-index: 10;
+  margin-bottom: 24px; /* Tight connection */
+  flex-shrink: 0;
 }
 
 .gallery-eyebrow {
@@ -794,10 +796,9 @@ nav {
 
 .gallery-track {
   display: flex;
-  align-items: center;
-  height: 100%;
+  align-items: flex-start; /* Align images to the top of track */
   gap: 30px;
-  padding: 0 4vw; /* More space on the left */
+  padding: 0 4vw;
   will-change: transform;
   perspective: 2000px;
 }
