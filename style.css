@@ -530,8 +530,40 @@ nav {
   font-weight: 400;
 }
 
-.bio-footer {
+.bio-stats-area {
   margin-top: 40px;
+}
+
+.bio-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.bio-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  padding-left: 15px;
+}
+
+.bio-stat span {
+  font-family: monospace;
+  font-size: 0.65rem;
+  opacity: 0.4;
+  letter-spacing: 0.1em;
+}
+
+.bio-stat strong {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+}
+
+.bio-footer {
+  margin-top: 60px;
   border-top: 1px solid rgba(255,255,255,0.1);
   padding-top: 40px;
   display: flex;
