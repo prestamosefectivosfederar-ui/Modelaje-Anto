@@ -276,23 +276,25 @@ class AntonellaApp {
 
     initOverlays() {
         const bioOverlay = document.querySelector('.bio-overlay');
-        const bioOpenBtn = document.querySelector('.btn-open-bio');
+        const bioOpenBtns = document.querySelectorAll('.btn-open-bio');
         const bioCloseBtn = document.querySelector('.btn-close-bio');
 
         const contactOverlay = document.querySelector('.contact-overlay');
-        const contactOpenBtn = document.querySelector('.btn-open-contact');
+        const contactOpenBtns = document.querySelectorAll('.btn-open-contact');
         const contactCloseBtn = document.querySelector('.btn-close-contact');
 
-        // Helper to handle lock scroll
         const lockScroll = (lock) => {
             document.body.style.overflow = lock ? 'hidden' : '';
         };
 
         // Bio Events
-        if (bioOverlay && bioOpenBtn && bioCloseBtn) {
-            bioOpenBtn.addEventListener('click', () => {
-                bioOverlay.classList.add('active');
-                lockScroll(true);
+        if (bioOverlay && bioCloseBtn) {
+            bioOpenBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    bioOverlay.classList.add('active');
+                    lockScroll(true);
+                });
             });
             bioCloseBtn.addEventListener('click', () => {
                 bioOverlay.classList.remove('active');
@@ -301,10 +303,15 @@ class AntonellaApp {
         }
 
         // Contact Events
-        if (contactOverlay && contactOpenBtn && contactCloseBtn) {
-            contactOpenBtn.addEventListener('click', () => {
-                contactOverlay.classList.add('active');
-                lockScroll(true);
+        if (contactOverlay && contactCloseBtn) {
+            contactOpenBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    contactOverlay.classList.add('active');
+                    lockScroll(true);
+                    // If opening contact from bio, maybe close bio?
+                    if (bioOverlay) bioOverlay.classList.remove('active');
+                });
             });
             contactCloseBtn.addEventListener('click', () => {
                 contactOverlay.classList.remove('active');
@@ -312,7 +319,6 @@ class AntonellaApp {
             });
         }
 
-        // Close all on Escape
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 if (bioOverlay) bioOverlay.classList.remove('active');
