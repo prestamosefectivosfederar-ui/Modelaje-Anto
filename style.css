@@ -243,8 +243,43 @@ nav {
   position: relative;
   display: flex;
   align-items: center;
+  background: #000;
   overflow: hidden;
-  background: #050505;
+}
+
+/* HERO INTEGRATED MARQUEE */
+.hero-marquee {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  z-index: 5;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 15px 0;
+  pointer-events: none;
+}
+
+.hero-marquee .marquee-content {
+  display: flex;
+  gap: 60px;
+  white-space: nowrap;
+  animation: marqueeHero 30s linear infinite;
+}
+
+.hero-marquee span {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  transition: color 0.4s ease;
+}
+
+@keyframes marqueeHero {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .hero-portrait-wrap {
