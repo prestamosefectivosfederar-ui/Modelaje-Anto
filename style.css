@@ -949,11 +949,63 @@ nav {
   opacity: 0.5;
 }
 
-/* Contact Section - Redesign */
-.contact {
-  padding: 150px 6vw 60px;
+.btn-open-contact {
+  background: transparent;
+  border: none;
+  color: white;
+  font-family: monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+}
+
+.btn-open-contact:hover {
+  opacity: 1;
+}
+
+/* Overlays Base Styles */
+.bio-overlay,
+.contact-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   background: #000;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  z-index: 20000;
+  transform: translateX(100%);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  padding: 80px 6vw 120px;
+  overscroll-behavior: contain;
+  cursor: default;
+}
+
+.bio-overlay.active,
+.contact-overlay.active {
+  transform: translateX(0);
+}
+
+.btn-close-bio,
+.btn-close-contact {
+  position: fixed;
+  top: 40px;
+  right: 6vw;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 20002;
+  transition: transform 0.3s ease;
+}
+
+.btn-close-bio:hover,
+.btn-close-contact:hover {
+  transform: rotate(90deg);
 }
 
 .contact-header {

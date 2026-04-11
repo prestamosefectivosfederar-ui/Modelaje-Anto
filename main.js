@@ -68,7 +68,7 @@ class AntonellaApp {
             this.initInteractive();
             this.tryInitStatsParticles();
             this.initFilmGrain();
-            this.initAboutCanvas();
+            this.initOverlays();
         }, 100);
     }
 
@@ -274,27 +274,51 @@ class AntonellaApp {
         } catch (e) { console.error(e); }
     }
 
-    initAboutCanvas() {
-        const overlay = document.querySelector('.bio-overlay');
-        const openBtn = document.querySelector('.btn-open-bio');
-        const closeBtn = document.querySelector('.btn-close-bio');
+    initOverlays() {
+        const bioOverlay = document.querySelector('.bio-overlay');
+        const bioOpenBtn = document.querySelector('.btn-open-bio');
+        const bioCloseBtn = document.querySelector('.btn-close-bio');
 
-        if (!overlay || !openBtn || !closeBtn) return;
+        const contactOverlay = document.querySelector('.contact-overlay');
+        const contactOpenBtn = document.querySelector('.btn-open-contact');
+        const contactCloseBtn = document.querySelector('.btn-close-contact');
 
-        openBtn.addEventListener('click', () => {
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scroll
-        });
+        // Helper to handle lock scroll
+        const lockScroll = (lock) => {
+            document.body.style.overflow = lock ? 'hidden' : '';
+        };
 
-        closeBtn.addEventListener('click', () => {
-            overlay.classList.remove('active');
-            document.body.style.overflow = ''; // Restore scroll
-        });
+        // Bio Events
+        if (bioOverlay && bioOpenBtn && bioCloseBtn) {
+            bioOpenBtn.addEventListener('click', () => {
+                bioOverlay.classList.add('active');
+                lockScroll(true);
+            });
+            bioCloseBtn.addEventListener('click', () => {
+                bioOverlay.classList.remove('active');
+                lockScroll(false);
+            });
+        }
 
-        // Close on Escape
+        // Contact Events
+        if (contactOverlay && contactOpenBtn && contactCloseBtn) {
+            contactOpenBtn.addEventListener('click', () => {
+                contactOverlay.classList.add('active');
+                lockScroll(true);
+            });
+            contactCloseBtn.addEventListener('click', () => {
+                contactOverlay.classList.remove('active');
+                lockScroll(false);
+            });
+        }
+
+        // Close all on Escape
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') overlay.classList.remove('active');
-            document.body.style.overflow = '';
+            if (e.key === 'Escape') {
+                if (bioOverlay) bioOverlay.classList.remove('active');
+                if (contactOverlay) contactOverlay.classList.remove('active');
+                lockScroll(false);
+            }
         });
     }
 }
