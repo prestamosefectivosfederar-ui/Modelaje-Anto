@@ -1034,6 +1034,52 @@ nav {
   color: transparent;
   -webkit-text-stroke: 1px white;
 }
+.contact-trigger-section {
+  padding: 180px 6vw;
+  text-align: center;
+  background: #000;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.trigger-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.trigger-title {
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 0.9;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  margin: 30px 0 60px;
+}
+
+.trigger-title .outline {
+  color: transparent;
+  -webkit-text-stroke: 1px white;
+}
+
+.btn-cta-main {
+  background: white;
+  color: black;
+  border: none;
+  padding: 25px 60px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  border-radius: 2px;
+  opacity: 1 !important; /* Force visibility */
+}
+
+.btn-cta-main:hover {
+  background: #a1a1a1;
+  transform: scale(1.05);
+  box-shadow: 0 20px 50px rgba(255,255,255,0.2);
+}
 
 .contact-grid {
   display: grid;
