@@ -187,41 +187,34 @@ class MagneticElement {
 // ============================================================
 class HorizontalGallery {
     constructor() {
-        this.section   = document.querySelector('.gallery-horizontal');
-        this.track     = document.querySelector('.gallery-track');
-        this.currentEl = document.querySelector('.gallery-current');
-        this.fillEl    = document.querySelector('.gallery-bar-fill');
-        if (!this.section || !this.track) return;
+        this.sections = document.querySelectorAll('.gallery-horizontal');
+        if (!this.sections.length) return;
         this._init();
     }
 
     _init() {
         if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
-        const items      = this.track.querySelectorAll('.gallery-h-item');
-        const totalItems = items.length;
+        this.sections.forEach(section => {
+            const track = section.querySelector('.gallery-track');
+            if (!track) return;
 
-        gsap.to(this.track, {
-            x: () => -(this.track.scrollWidth - window.innerWidth + 160),
-            ease: 'none',
-            scrollTrigger: {
-                trigger:             this.section,
-                start:               'top top',
-                end:                 () => `+=${this.track.scrollWidth - window.innerWidth + 160}`,
-                pin:                 true,
-                scrub:               1.2,
-                anticipatePin:       1,
-                invalidateOnRefresh: true,
-                onUpdate: (self) => {
-                    const idx = Math.round(self.progress * (totalItems - 1));
-                    if (this.currentEl) {
-                        this.currentEl.textContent = String(idx + 1).padStart(2, '0');
-                    }
-                    if (this.fillEl) {
-                        this.fillEl.style.transform = `scaleX(${self.progress})`;
-                    }
+            const items = track.querySelectorAll('.gallery-h-item');
+            if (!items.length) return;
+
+            gsap.to(track, {
+                x: () => -(track.scrollWidth - window.innerWidth + 120),
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top top',
+                    end: () => `+=${track.scrollWidth}`,
+                    pin: true,
+                    scrub: 1,
+                    anticipatePin: 1,
+                    invalidateOnRefresh: true
                 }
-            }
+            });
         });
     }
 }
