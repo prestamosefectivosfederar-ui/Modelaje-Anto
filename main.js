@@ -239,26 +239,26 @@ class AntonellaApp {
         const grid = document.getElementById('hero-grid');
         if (!grid) return;
 
-        // Create 100 squares (10x10)
-        for (let i = 0; i < 100; i++) {
-            const square = document.createElement('div');
-            square.classList.add('grid-square');
-            grid.appendChild(square);
+        // Create 20 vertical bars
+        for (let i = 0; i < 20; i++) {
+            const bar = document.createElement('div');
+            bar.classList.add('grid-square');
+            grid.appendChild(bar);
         }
 
-        // Animate them out after the loader reveals the page
-        const squares = grid.querySelectorAll('.grid-square');
+        // Animate them out bar by bar
+        const bars = grid.querySelectorAll('.grid-square');
         if (typeof gsap !== 'undefined') {
-            gsap.to(squares, {
-                opacity: 0,
-                duration: 0.1, // Short per square
+            gsap.to(bars, {
+                scaleY: 0,
+                transformOrigin: "top",
+                duration: 1.2,
                 stagger: {
-                    amount: 1.5, // Total time to reveal all
-                    from: "random", // Instagram style random reveal or "start"
-                    grid: [10, 10]
+                    amount: 1, // Total duration for all bars to clear
+                    from: "start"
                 },
-                ease: "none",
-                delay: 1.2 // After page reveal animation starts
+                ease: "expo.inOut",
+                delay: 1.2
             });
         }
     }
