@@ -41,20 +41,30 @@
 
         <main>
             <section class="hero">
-                <div class="hero-bg">
+                <!-- Canvas de partículas Three.js — inyectado por FluidParticles -->
+
+                <!-- Retrato lado derecho -->
+                <div class="hero-portrait-wrap">
                     <img src="about_model.jpeg" alt="Antonella Dimenza" id="hero-portrait">
-                    <div class="hero-grid-reveal" id="hero-grid"></div>
-                    <div class="light-sweep"></div>
+                    <div class="hero-portrait-gradient"></div>
                 </div>
-                
+
+                <!-- Contenido lado izquierdo -->
                 <div class="hero-content">
-                    <p class="hero-subtext">Modelo de Alta Costura especializada en campañas Editoriales, de Pasarela y Comerciales en todo el mundo.</p>
-                    <button class="btn-open-bio">BIOGRAFÍA / BIO</button>
+                    <span class="hero-eyebrow">/ Modelo de Alta Costura</span>
+                    <h1 class="hero-title">
+                        <span class="hero-title-line" data-split="true">ANTONELLA</span>
+                        <span class="hero-title-line hero-title-outline" data-split="true">DIMENZA</span>
+                    </h1>
+                    <div class="hero-divider"></div>
+                    <p class="hero-subtext">Especializada en campañas Editoriales,<br>de Pasarela y Comerciales.</p>
+                    <button class="btn-open-bio btn-hero-cta">BIOGRAFÍA / BIO</button>
                 </div>
-                
+
+                <!-- Indicador de scroll -->
                 <div class="scroll-indicator">
-                    <div class="mouse"></div>
-                    <span>Desliza para explorar</span>
+                    <div class="scroll-line-anim"></div>
+                    <span>SCROLL</span>
                 </div>
             </section>
 
