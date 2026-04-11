@@ -791,6 +791,8 @@ nav {
   position: relative;
   border-radius: 4px;
   background: #111;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4); /* Base separation */
+  transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Light Sweep for Pop Effect */
@@ -855,7 +857,9 @@ nav {
 }
 
 .gallery-h-item:hover .gallery-h-img-wrap {
-  box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+  box-shadow: 
+    0 40px 100px rgba(0,0,0,0.8), 
+    0 0 40px rgba(200,169,110,0.15); /* Subtile "Luminous" shadow as requested */
 }
 
 .gallery-h-item:hover::after {
