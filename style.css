@@ -763,12 +763,15 @@ nav {
   height: 100vh;
   overflow: hidden;
   background: #000;
-  padding-top: 15vh; /* Controlled top offset */
+  padding-top: 80px; /* Reduced top offset drastically */
+  display: flex;
+  flex-direction: column;
 }
 
 .gallery-header {
   padding: 0 4vw;
-  margin-bottom: 30px; /* Reduced gap */
+  margin-bottom: 20px; /* Minimal gap for impactful connection */
+  z-index: 10;
 }
 
 .gallery-eyebrow {
