@@ -427,79 +427,40 @@ class AntonellaApp {
     animateHero() {
         if (typeof gsap === 'undefined') return;
 
-        const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+        const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
-        // 1. Scanline Reveal
-        tl.set('.hero-scanline', { display: 'block', top: '-100%' });
-        tl.to('.hero-scanline', { top: '100%', duration: 1.2, ease: 'expo.inOut' });
-
-        // 2. Background Monumental Text
-        tl.fromTo('.hero-bg-text',
-            { x: -100, opacity: 0 },
-            { x: 0, opacity: 0.03, duration: 2.5, ease: 'power2.out' },
-            0.5
+        // 1. Text Entrance - Opposite sides
+        tl.fromTo('.top-line .giant-title',
+            { x: '-105%', opacity: 0 },
+            { x: '0%', opacity: 1, duration: 2 },
+            0
         );
 
-        // 3. Main Portrait
-        tl.fromTo('.hero-portrait-impact img',
-            { scale: 1.3, filter: 'brightness(0) contrast(1.5)' },
-            { scale: 1.1, filter: 'brightness(0.9) contrast(1.1)', duration: 3, ease: 'power2.out' },
-            0.6
+        tl.fromTo('.bottom-line .giant-title',
+            { x: '105%', opacity: 0 },
+            { x: '0%', opacity: 1, duration: 2 },
+            0.1
         );
 
-        // 4. Surname Floating Reveal
-        tl.fromTo('.surname-float',
-            { y: 100, opacity: 0, scale: 0.9, letterSpacing: '0.2em' },
-            { y: 0, opacity: 1, scale: 1, letterSpacing: 'normal', duration: 2, ease: 'expo.out' },
-            1.2
+        // 2. Image Reveal - Curtain effect
+        tl.fromTo('.image-overlay-reveal',
+            { scaleX: 1 },
+            { scaleX: 0, duration: 2.5, transformOrigin: 'center' },
+            0.3
         );
 
-        // 5. Meta & Description
-        tl.fromTo('.hero-editorial-meta, .hero-description-impact',
-            { y: 30, opacity: 0 },
-            { y: 0, opacity: 1, duration: 1.5, stagger: 0.2 },
-            1.8
+        tl.fromTo('.hero-wide-image-wrap img',
+            { scale: 1.2 },
+            { scale: 1, duration: 3 },
+            0.3
         );
 
-        // 6. Circle Button
-        tl.fromTo('.hero-circle-btn',
-            { scale: 0.5, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.7)' },
-            2.2
+        // 3. Footer Details Reveal
+        tl.fromTo('.hero-wide-footer div',
+            { y: 20, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1, stagger: 0.1 },
+            1.5
         );
-
-        // Initialize Mouse Parallax for Surname
-        this.initHeroParallax();
-    }
-
-    initHeroParallax() {
-        const hero = document.querySelector('.hero-impact');
-        const surname = document.querySelector('.surname-float');
-        const bgText = document.querySelector('.hero-bg-text');
-
-        if (!hero || !surname) return;
-
-        hero.addEventListener('mousemove', (e) => {
-            const { clientX, clientY } = e;
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-
-            const moveX = (clientX - centerX) / 25;
-            const moveY = (clientY - centerY) / 25;
-
-            gsap.to(surname, {
-                x: moveX,
-                y: moveY,
-                duration: 1,
-                ease: 'power2.out'
-            });
-
-            gsap.to(bgText, {
-                x: -moveX * 0.5,
-                duration: 1.5,
-                ease: 'power2.out'
-            });
-        });
     }
 
     initGSAP() {
