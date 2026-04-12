@@ -1805,6 +1805,174 @@ nav {
   border-top: 1px solid rgba(255,255,255,0.06);
 }
 
+/* ==========================================================================
+   NEW EDITORIAL HERO SECTION
+   ========================================================================== */
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Background Texture / Grain */
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("https://www.transparenttextures.com/patterns/p6.png");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.hero-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 120px 80px 60px 80px;
+}
+
+/* Central Portrait Treatment */
+.hero-portrait-main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70vh;
+    height: 85vh;
+    overflow: hidden;
+    z-index: 1;
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+}
+
+.hero-portrait-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.85) contrast(1.1) grayscale(0.2);
+    transform: scale(1.1);
+}
+
+/* Editorial Typography */
+.hero-title-wrap {
+    position: relative;
+    z-index: 20;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+}
+
+.hero-name-top {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(3rem, 8vw, 10rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #fff;
+    line-height: 0.8;
+    text-transform: uppercase;
+}
+
+.hero-name-bottom {
+    font-family: 'Playfair Display', serif; /* Necesitaremos importar Playfair */
+    font-size: clamp(4rem, 12vw, 18rem);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent-gold);
+    align-self: flex-end;
+    margin-top: -0.2em;
+    line-height: 0.8;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Micro Typography / Editorial Details */
+.hero-details-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    z-index: 20;
+}
+
+.editorial-tag {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.editorial-tag::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--accent-gold);
+}
+
+.hero-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 20;
+}
+
+.hero-bio-short {
+    max-width: 300px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.05em;
+    border-left: 1px solid var(--accent-gold);
+    padding-left: 20px;
+}
+
+.scroll-indicator-v2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.scroll-line {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--accent-gold), transparent);
+}
+
+.scroll-text-v2 {
+    font-size: 9px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    color: var(--accent-gold);
+}
+
+/* Animations Reveal */
+.char-reveal {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+}
+
+.char-reveal span {
+    display: inline-block;
+    transform: translateY(100%);
+}
+
 .portfolio-section-header {
   display: flex;
   align-items: flex-start;

@@ -424,54 +424,49 @@ class AntonellaApp {
         render();
     }
 
-    _splitTitleLetters() {
-        document.querySelectorAll('.hero-title-line[data-split]').forEach(line => {
-            const text = line.textContent.trim();
-            line.textContent = '';
-            text.split('').forEach(char => {
-                const span = document.createElement('span');
-                span.textContent = char === ' ' ? '\u00A0' : char;
-                line.appendChild(span);
-            });
-        });
-    }
-
     animateHero() {
         if (typeof gsap === 'undefined') return;
 
-        this._splitTitleLetters();
-
         const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
-        tl.fromTo('.hero-eyebrow',
-            { y: 16, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.8 },
+        // 1. Initial State for Image
+        tl.fromTo('.hero-portrait-main img',
+            { scale: 1.2, filter: 'brightness(0) contrast(1.2)' },
+            { scale: 1, filter: 'brightness(0.85) contrast(1.1)', duration: 2.5, ease: 'power2.out' },
             0
         );
 
-        tl.to('.hero-title-line span', {
-            y: 0,
-            opacity: 1,
-            duration: 0.7,
-            stagger: 0.035
-        }, 0.15);
-
-        tl.fromTo('.hero-divider',
-            { width: 0 },
-            { width: 50, duration: 0.8, ease: 'expo.out' },
+        // 2. Typography Glide
+        tl.fromTo('.hero-name-top',
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1.5, ease: 'expo.out' },
             0.5
         );
 
-        tl.fromTo('.hero-subtext',
-            { y: 20, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.7 },
+        tl.fromTo('.hero-name-bottom',
+            { y: 60, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1.8, ease: 'expo.out' },
             0.7
         );
 
-        tl.fromTo('.btn-hero-cta',
-            { y: 16, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6 },
-            0.9
+        // 3. Editorial Tags & Bio
+        tl.fromTo('.editorial-tag',
+            { x: -20, opacity: 0 },
+            { x: 0, opacity: 1, duration: 1, stagger: 0.15 },
+            1.2
+        );
+
+        tl.fromTo('.hero-bio-short',
+            { opacity: 0 },
+            { opacity: 1, duration: 1.5 },
+            1.5
+        );
+
+        // 4. Scroll Indicator
+        tl.fromTo('.scroll-line',
+            { scaleY: 0 },
+            { scaleY: 1, duration: 1, transformOrigin: 'top' },
+            1.8
         );
     }
 
