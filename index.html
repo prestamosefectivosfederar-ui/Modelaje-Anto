@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -44,25 +44,61 @@
         </header>
 
         <main>
-            <!-- ========== HERO WIDE DOMINANCE (FIXED) ========== -->
-            <section class="hero-wide">
-                <div class="hero-wide-container">
-                    <div class="hero-wide-line top-line">
-                        <h1 class="giant-title">ANTONELLA</h1>
-                    </div>
-                    <div class="hero-wide-image-wrap">
-                        <img src="https://images.unsplash.com/photo-1547113110-33e9d854497e?auto=format&fit=crop&w=1600&q=95" alt="Antonella Dimenza">
-                        <div class="image-overlay-reveal"></div>
-                    </div>
-                    <div class="hero-wide-line bottom-line">
-                        <h1 class="giant-title">DIMENZA</h1>
+            <!-- ========== HERO — FULL BLEED EDITORIAL ========== -->
+            <section class="hero-wide hero">
+
+                <!-- Full-bleed photo -->
+                <div class="hero-photo-wrap">
+                    <img class="hero-photo-img" src="f1.png" alt="Antonella Dimenza">
+                    <div class="hero-photo-gradient"></div>
+                </div>
+
+                <!-- Entry reveal curtain (GSAP) -->
+                <div class="image-overlay-reveal"></div>
+
+                <!-- Name: top-left / bottom-right split -->
+                <div class="hero-name-wrap">
+                    <h1 class="giant-title hero-name-top">Antonella</h1>
+                    <h1 class="giant-title hero-name-bottom">Dimenza</h1>
+                </div>
+
+                <!-- Bottom info bar -->
+                <div class="hero-bottom-bar">
+                    <div class="hero-specs">
+                        <span>Editorial</span>
+                        <span class="hm-dot">·</span>
+                        <span>Runway</span>
+                        <span class="hm-dot">·</span>
+                        <span>Commercial</span>
                     </div>
                     <div class="hero-cta-fixed">
-                        <button class="btn-hero-cta" onclick="gsap.to(window, {duration: 1.5, scrollTo: '.gallery-horizontal', ease: 'expo.inOut'})">
-                            VIEW PORTFOLIO
-                        </button>
+                        <button class="btn-hero-cta btn-open-bio">Portfolio</button>
+                    </div>
+                    <span class="hero-year-tag">SS&thinsp;2026</span>
+                </div>
+
+                <!-- Scroll indicator -->
+                <div class="hero-scroll-ind">
+                    <div class="hero-scroll-line"></div>
+                    <span>Scroll</span>
+                </div>
+
+                <!-- Bottom marquee -->
+                <div class="hero-bottom-marquee">
+                    <div class="hero-marquee-track">
+                        <span>Antonella Dimenza</span><span class="hm-dot">◆</span>
+                        <span>Editorial</span><span class="hm-dot">◆</span>
+                        <span>Runway</span><span class="hm-dot">◆</span>
+                        <span>Milan · Paris · New York</span><span class="hm-dot">◆</span>
+                        <span>Season 2026</span><span class="hm-dot">◆</span>
+                        <span>Antonella Dimenza</span><span class="hm-dot">◆</span>
+                        <span>Editorial</span><span class="hm-dot">◆</span>
+                        <span>Runway</span><span class="hm-dot">◆</span>
+                        <span>Milan · Paris · New York</span><span class="hm-dot">◆</span>
+                        <span>Season 2026</span><span class="hm-dot">◆</span>
                     </div>
                 </div>
+
             </section>
 
 

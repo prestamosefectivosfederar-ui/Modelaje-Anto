@@ -441,32 +441,65 @@ class AntonellaApp {
 
         const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
-        // 1. Line Slidedowns
-        tl.fromTo('.top-line .giant-title',
-            { x: '-105%', opacity: 0 },
-            { x: '0%', opacity: 1, duration: 2 },
+        // 1. Curtain wipe DOWN — reveals full-bleed photo
+        tl.fromTo('.image-overlay-reveal',
+            { scaleY: 1 },
+            { scaleY: 0, duration: 1.8, ease: 'expo.inOut', transformOrigin: 'top center' },
             0
         );
 
-        tl.fromTo('.bottom-line .giant-title',
-            { x: '105%', opacity: 0 },
-            { x: '0%', opacity: 1, duration: 2 },
-            0.1
+        // 2. "Antonella" — clips up from bottom of its own overflow
+        tl.fromTo('.hero-name-top',
+            { y: '105%' },
+            { y: '0%', duration: 1.6, ease: 'expo.out' },
+            0.6
         );
 
-        // 2. Image Reveal
-        tl.fromTo('.image-overlay-reveal',
-            { scaleX: 1 },
-            { scaleX: 0, duration: 2.5, transformOrigin: 'center' },
-            0.3
+        // 3. "Dimenza" — clips up with slight delay
+        tl.fromTo('.hero-name-bottom',
+            { y: '105%' },
+            { y: '0%', duration: 1.6, ease: 'expo.out' },
+            0.78
         );
 
-        // 3. CTA Fade
-        tl.fromTo('.hero-cta-fixed',
-            { y: 30, opacity: 0 },
-            { y: 0, opacity: 1, duration: 1.5, ease: 'power4.out' },
-            1.5
+        // 4. Bottom bar (specs + CTA + year)
+        tl.fromTo('.hero-bottom-bar',
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' },
+            1.6
         );
+
+        // 5. Scroll indicator
+        tl.fromTo('.hero-scroll-ind',
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' },
+            1.8
+        );
+
+        // 6. Marquee strip
+        tl.fromTo('.hero-bottom-marquee',
+            { opacity: 0 },
+            { opacity: 1, duration: 0.8 },
+            2.0
+        );
+
+        // 7. Mouse parallax on photo (subtle, elegant)
+        this._initHeroParallax();
+    }
+
+    _initHeroParallax() {
+        const img = document.querySelector('.hero-photo-img');
+        if (!img || typeof gsap === 'undefined') return;
+
+        const xTo = gsap.quickTo(img, 'x', { duration: 1.8, ease: 'power3.out' });
+        const yTo = gsap.quickTo(img, 'y', { duration: 1.8, ease: 'power3.out' });
+
+        window.addEventListener('mousemove', (e) => {
+            const nx = (e.clientX / window.innerWidth  - 0.5) * 2; // -1 to +1
+            const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+            xTo(nx * -14);
+            yTo(ny * -10);
+        });
     }
 
     initGSAP() {
