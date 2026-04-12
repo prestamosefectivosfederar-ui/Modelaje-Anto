@@ -297,7 +297,7 @@ class AntonellaApp {
         setTimeout(() => {
             // Partículas Three.js en el hero
             if (typeof THREE !== 'undefined') {
-                const heroSection = document.querySelector('.hero-ed');
+                const heroSection = document.querySelector('.hero');
                 if (heroSection) this.fluidParticles = new FluidParticles(heroSection);
             }
             this.tryInitLenis();
@@ -424,81 +424,49 @@ class AntonellaApp {
         render();
     }
 
+    _splitTitleLetters() {
+        document.querySelectorAll('.hero-title-line[data-split]').forEach(line => {
+            const text = line.textContent.trim();
+            line.textContent = '';
+            text.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.textContent = char === ' ' ? '\u00A0' : char;
+                line.appendChild(span);
+            });
+        });
+    }
+
     animateHero() {
         if (typeof gsap === 'undefined') return;
 
         const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
-        // 1. Portrait slides in from left
-        tl.fromTo('.hero-ed-portrait',
-            { x: '-6%', opacity: 0 },
-            { x: '0%', opacity: 1, duration: 1.8 },
+        // 1. Line Slidedowns
+        tl.fromTo('.top-line .giant-title',
+            { x: '-105%', opacity: 0 },
+            { x: '0%', opacity: 1, duration: 2 },
             0
         );
 
-        // 2. Tag line
-        tl.fromTo('.hero-ed-tag',
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.9 },
-            0.55
+        tl.fromTo('.bottom-line .giant-title',
+            { x: '105%', opacity: 0 },
+            { x: '0%', opacity: 1, duration: 2 },
+            0.1
         );
 
-        // 3. First name sweeps up
-        tl.fromTo('.hero-ed-first',
-            { y: '105%', opacity: 0 },
-            { y: '0%', opacity: 1, duration: 1.1 },
-            0.7
+        // 2. Image Reveal
+        tl.fromTo('.image-overlay-reveal',
+            { scaleX: 1 },
+            { scaleX: 0, duration: 2.5, transformOrigin: 'center' },
+            0.3
         );
 
-        // 4. Last name (italic outline) sweeps up
-        tl.fromTo('.hero-ed-last',
-            { y: '105%', opacity: 0 },
-            { y: '0%', opacity: 1, duration: 1.1 },
-            0.85
+        // 3. CTA Fade
+        tl.fromTo('.hero-cta-fixed',
+            { y: 30, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1.5, ease: 'power4.out' },
+            1.5
         );
-
-        // 5. Gold rule expands
-        tl.fromTo('.hero-ed-rule',
-            { width: '0px' },
-            { width: '85%', duration: 1.3, ease: 'power3.out' },
-            1.05
-        );
-
-        // 6. Stats row fades up
-        tl.fromTo('.hero-ed-meta',
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.85 },
-            1.25
-        );
-
-        // 7. CTA fades up
-        tl.fromTo('.hero-ed-cta',
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.85 },
-            1.45
-        );
-
-        // 8. Corner metadata
-        tl.fromTo(['.hero-ed-corner-tl', '.hero-ed-corner-bl'],
-            { opacity: 0 },
-            { opacity: 1, duration: 1.2, stagger: 0.2 },
-            1.3
-        );
-
-        // 9. Mouse parallax on portrait
-        const portrait = document.getElementById('hero-main-img');
-        if (portrait) {
-            document.addEventListener('mousemove', (e) => {
-                const x = (e.clientX / window.innerWidth  - 0.5) * 10;
-                const y = (e.clientY / window.innerHeight - 0.5) * 7;
-                gsap.to(portrait, {
-                    x: x + 'px',
-                    y: y + 'px',
-                    duration: 1.8,
-                    ease: 'power2.out'
-                });
-            });
-        }
     }
 
     initGSAP() {
@@ -545,15 +513,14 @@ class AntonellaApp {
     initInteractive() {
         const cursor = document.querySelector('.cursor');
         if (!cursor) return;
-
         window.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            if (typeof gsap !== 'undefined') {
+                gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            }
         });
-
-        // Add class instead of inline styles for cleaner control
-        document.querySelectorAll('a, button, .gallery-item, .media-box, .hero-wide-footer div').forEach(link => {
-            link.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            link.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        document.querySelectorAll('a, button, .gallery-item, .media-box').forEach(link => {
+            link.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(5)');
+            link.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
         });
     }
 
