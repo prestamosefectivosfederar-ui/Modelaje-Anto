@@ -196,33 +196,40 @@ class HorizontalGallery {
     }
 
     _init() {
-        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+        if (typeof gsap === 'undefined') return;
 
-        const items      = this.track.querySelectorAll('.gallery-h-item');
+        // Clone items for infinite loop
+        const items = Array.from(this.track.children);
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            this.track.appendChild(clone);
+        });
+
+        // Calculate total width
         const totalItems = items.length;
+        const scrollWidth = this.track.scrollWidth / 2;
 
-        gsap.to(this.track, {
-            x: () => -(this.track.scrollWidth - window.innerWidth + 160),
-            ease: 'none',
-            scrollTrigger: {
-                trigger:             this.section,
-                start:               'top top',
-                end:                 () => `+=${this.track.scrollWidth - window.innerWidth + 160}`,
-                pin:                 true,
-                scrub:               1.2,
-                anticipatePin:       1,
-                invalidateOnRefresh: true,
-                onUpdate: (self) => {
-                    const idx = Math.round(self.progress * (totalItems - 1));
-                    if (this.currentEl) {
-                        this.currentEl.textContent = String(idx + 1).padStart(2, '0');
-                    }
-                    if (this.fillEl) {
-                        this.fillEl.style.transform = `scaleX(${self.progress})`;
-                    }
+        // Auto-moving Infinite Marquee logic
+        const marquee = gsap.to(this.track, {
+            x: -scrollWidth,
+            duration: 45, // Velocidad elegante
+            ease: "none",
+            repeat: -1,
+            onUpdate: () => {
+                // Update progress bar and number based on position
+                const progress = Math.abs(gsap.getProperty(this.track, "x") / scrollWidth);
+                const idx = Math.floor(progress * totalItems);
+                if (this.currentEl) {
+                    this.currentEl.textContent = String((idx % totalItems) + 1).padStart(2, '0');
+                }
+                if (this.fillEl) {
+                    this.fillEl.style.transform = `scaleX(${progress})`;
                 }
             }
         });
+
+        // Optional: Slow down on segments or keep it constant
+        // For now, constant refined movement as requested
     }
 }
 

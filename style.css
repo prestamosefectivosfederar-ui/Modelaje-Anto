@@ -58,9 +58,9 @@ body:not(.loading) #app {
 }
 
 :root {
-  --bg-color: #080808;
+  --bg-color: #000;
   --text-color: #F0F0F0;
-  --accent-color: #E0E0E0; /* Minimalist White/Silver for a cleaner fashion look */
+  --accent-color: #E0E0E0; 
   --font-main: 'Inter', sans-serif;
   --glass: rgba(255, 255, 255, 0.03);
   --border-glass: rgba(255, 255, 255, 0.1);
@@ -76,7 +76,7 @@ body:not(.loading) #app {
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
-  background: #050505;
+  background: #000;
 }
 
 .glow-1, .glow-2 {
@@ -296,14 +296,15 @@ nav {
   height: 100%;
   object-fit: cover;
   object-position: top center;
-  filter: grayscale(0.15) contrast(1.05);
-  opacity: 0.75;
+  filter: grayscale(40%) contrast(1.1) brightness(0.65);
+  opacity: 0.8;
 }
 
 .hero-portrait-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, #050505 10%, transparent 100%);
+  /* Degradado a NEGRO PURO desde la izquierda */
+  background: linear-gradient(to right, #000 0%, #000 25%, transparent 100%);
 }
 
 .hero-content {
@@ -883,11 +884,10 @@ nav {
 
 .gallery-track {
   display: flex;
-  align-items: flex-start; /* Align images to the top of track */
+  align-items: center;
   gap: 30px;
-  padding: 0 4vw;
+  padding: 40px 0;
   will-change: transform;
-  perspective: 2000px;
 }
 
 .gallery-h-item {
@@ -1529,7 +1529,7 @@ nav {
 }
 
 .input-group select option {
-  background: #1a1c1c;
+  background: #000;
   color: white;
 }
 
@@ -1801,7 +1801,7 @@ nav {
    ============================================ */
 .portfolio-section {
   padding: 120px 8vw;
-  background: #080808;
+  background: #000;
   border-top: 1px solid rgba(255,255,255,0.06);
 }
 
@@ -1845,7 +1845,7 @@ nav {
 .portfolio-img-placeholder {
   width: 100%;
   height: 100%;
-  background: #111;
+  background: #000;
   border: 1px solid rgba(255,255,255,0.06);
   position: relative;
 }
@@ -1854,7 +1854,7 @@ nav {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #141414 0%, #0a0a0a 100%);
+  background: #000;
 }
 
 .portfolio-item {
