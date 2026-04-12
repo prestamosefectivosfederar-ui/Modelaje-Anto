@@ -1806,9 +1806,9 @@ nav {
 }
 
 /* ==========================================================================
-   NEW EDITORIAL HERO SECTION
+   IMPACT TITAN HERO V3
    ========================================================================== */
-.hero {
+.hero-impact {
     position: relative;
     width: 100%;
     height: 100vh;
@@ -1819,158 +1819,178 @@ nav {
     justify-content: center;
 }
 
-/* Background Texture / Grain */
-.hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("https://www.transparenttextures.com/patterns/p6.png");
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 5;
-}
-
-.hero-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-width: 1600px;
-    margin: 0 auto;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 120px 80px 60px 80px;
-}
-
-/* Central Portrait Treatment */
-.hero-portrait-main {
+/* Monumental Background Text */
+.hero-bg-text {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 70vh;
-    height: 85vh;
-    overflow: hidden;
+    font-size: min(25vw, 450px);
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
     z-index: 1;
-    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    letter-spacing: -0.05em;
+    pointer-events: none;
+    text-transform: uppercase;
 }
 
-.hero-portrait-main img {
+/* Layered Portrait */
+.hero-portrait-impact {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 65vh;
+    height: 85vh;
+    z-index: 5;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+}
+
+.hero-portrait-impact img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.85) contrast(1.1) grayscale(0.2);
+    filter: brightness(0.9) contrast(1.1);
     transform: scale(1.1);
+    will-change: transform;
 }
 
-/* Editorial Typography */
-.hero-title-wrap {
-    position: relative;
-    z-index: 20;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+.portrait-shadow {
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 100px #000;
     pointer-events: none;
 }
 
-.hero-name-top {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(3rem, 8vw, 10rem);
-    font-weight: 900;
-    letter-spacing: -0.04em;
-    color: #fff;
-    line-height: 0.8;
-    text-transform: uppercase;
-}
-
-.hero-name-bottom {
-    font-family: 'Playfair Display', serif; /* Necesitaremos importar Playfair */
-    font-size: clamp(4rem, 12vw, 18rem);
-    font-style: italic;
-    font-weight: 400;
-    color: var(--accent-gold);
-    align-self: flex-end;
-    margin-top: -0.2em;
-    line-height: 0.8;
-    text-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-/* Micro Typography / Editorial Details */
-.hero-details-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+/* Foreground Content */
+.hero-fg-content {
+    position: relative;
     width: 100%;
+    height: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
     z-index: 20;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 100px 60px;
+    pointer-events: none;
 }
 
-.editorial-tag {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
+.hero-editorial-meta {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: rgba(255,255,255,0.4);
 }
 
-.editorial-tag::before {
-    content: '';
-    width: 30px;
+.meta-line {
+    width: 40px;
     height: 1px;
     background: var(--accent-gold);
 }
 
-.hero-footer {
+.hero-impact-title {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+}
+
+.surname-float {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(5rem, 15vw, 22rem);
+    font-weight: 900;
+    font-style: italic;
+    color: var(--accent-gold);
+    display: inline-block;
+    line-height: 1;
+    text-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    pointer-events: auto;
+    cursor: default;
+}
+
+.hero-description-impact {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    z-index: 20;
 }
 
-.hero-bio-short {
-    max-width: 300px;
-    font-size: 13px;
+.hero-description-impact p {
+    max-width: 380px;
+    font-size: 14px;
     line-height: 1.6;
     color: rgba(255,255,255,0.6);
     letter-spacing: 0.05em;
-    border-left: 1px solid var(--accent-gold);
-    padding-left: 20px;
+    margin: 0;
 }
 
-.scroll-indicator-v2 {
+/* Circular Scroll Button */
+.hero-circle-btn {
+    position: relative;
+    width: 140px;
+    height: 140px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 20px;
+    justify-content: center;
+    pointer-events: auto;
+    cursor: pointer;
 }
 
-.scroll-line {
-    width: 1px;
-    height: 80px;
-    background: linear-gradient(to bottom, var(--accent-gold), transparent);
+.hero-circle-btn svg {
+    width: 100%;
+    height: 100%;
+    animation: rotateText 15s linear infinite;
+    fill: var(--accent-gold);
 }
 
-.scroll-text-v2 {
-    font-size: 9px;
-    letter-spacing: 0.5em;
+.hero-circle-btn text {
+    font-size: 12px;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    writing-mode: vertical-rl;
-    color: var(--accent-gold);
+    font-weight: 700;
 }
 
-/* Animations Reveal */
-.char-reveal {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: bottom;
+#circlePath { fill: none; }
+
+.arrow-down {
+    position: absolute;
+    font-size: 24px;
+    color: #fff;
+    animation: bounceDown 2s infinite;
 }
 
-.char-reveal span {
-    display: inline-block;
-    transform: translateY(100%);
+/* Scanline Effect */
+.hero-scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(to bottom, transparent, rgba(200, 169, 110, 0.4), transparent);
+    background-size: 100% 5px;
+    background-repeat: no-repeat;
+    z-index: 100;
+    pointer-events: none;
+    display: none; /* Controlled by JS */
+}
+
+@keyframes rotateText {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
 }
 
 .portfolio-section-header {
