@@ -2675,3 +2675,127 @@ nav {
     pointer-events: auto !important;
     visibility: visible !important;
 }
+
+/* ==========================================================================
+   ULTRA-RESPONSIVE MOBILE OVERRIDES
+   ========================================================================== */
+@media (max-width: 640px) {
+    /* ── Hero Adjustments ── */
+    .hero-wide {
+        height: 100dvh !important;
+    }
+
+    .giant-title {
+        font-size: clamp(3.2rem, 14vw, 5.5rem) !important;
+        line-height: 0.9 !important;
+        letter-spacing: -0.02em !important;
+    }
+
+    .hero-name-wrap {
+        padding: 12vh 20px 18vh !important;
+    }
+
+    .hero-photo-img {
+        object-position: 50% 20% !important;
+    }
+
+    /* ── Navigation ── */
+    header nav {
+        padding: 15px !important;
+    }
+
+    .nav-cta-wrap {
+        gap: 8px !important;
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .nav-cta-wrap .btn-hero-cta {
+        width: 120px !important;
+        height: 36px !important;
+        font-size: 0.48rem !important;
+    }
+
+    /* ── Marquee ── */
+    .hero-bottom-marquee {
+        padding: 6px 0 !important;
+    }
+
+    .hero-marquee-track {
+        gap: 1.5rem !important;
+    }
+
+    .hero-marquee-track span {
+        font-size: 0.6rem !important;
+        padding: 0.4rem 1.2rem !important;
+    }
+
+    /* ── Overlays ── */
+    .bio-overlay-inner, .contact-grid, .locations-content {
+        padding: 5rem 15px 2rem !important;
+    }
+
+    .bio-main-title, .contact-main-title, .locations-title {
+        font-size: 2.8rem !important;
+        line-height: 1 !important;
+    }
+
+    .bio-content-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+
+    .bio-images {
+        display: none !important;
+    }
+
+    .bio-stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .contact-image-pane {
+        display: none !important;
+    }
+
+    .locations-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .location-card {
+        padding: 1.2rem !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* ── Portfolio Overlays ── */
+    .portfolio-overlay .overlay-container {
+        padding: 5rem 10px 2rem !important;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    .portfolio-section-title {
+        font-size: 2.2rem !important;
+    }
+
+    /* Close buttons mobile polish */
+    .btn-close-bio, .btn-close-contact, .btn-close-locations, .btn-close-overlay {
+        top: 10px !important;
+        right: 10px !important;
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 1.2rem !important;
+    }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+    .giant-title { font-size: 4rem !important; }
+}
+
