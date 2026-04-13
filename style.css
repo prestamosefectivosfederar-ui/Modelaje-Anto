@@ -2466,7 +2466,7 @@ nav {
     font-weight: 300;
     text-transform: uppercase;
     letter-spacing: 0.4em;
-    color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.45); /* Increased for better visibility */
     cursor: pointer;
     transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     display: inline-flex;
@@ -2523,7 +2523,7 @@ nav {
 
 .hm-dot {
     font-size: 0.6rem;
-    color: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.25); /* More visible dot */
     pointer-events: none;
     margin: 0 1rem;
 }
@@ -2641,4 +2641,56 @@ nav {
 
 .btn-open-locations:hover {
     text-decoration-color: var(--accent-gold);
+}
+
+/* Portfolio Overlay */
+.portfolio-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(30px);
+    z-index: 5000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.portfolio-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.portfolio-overlay .overlay-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 10rem 2rem 5rem;
+}
+
+.btn-close-overlay {
+    position: fixed;
+    top: 3rem;
+    right: 3rem;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    z-index: 5010;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.btn-close-overlay:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+.portfolio-overlay .portfolio-section-header {
+    margin-bottom: 5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 2rem;
 }

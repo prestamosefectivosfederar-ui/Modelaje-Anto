@@ -600,59 +600,76 @@ class AntonellaApp {
             document.body.style.overflow = lock ? 'hidden' : '';
         };
 
-        // Bio Events
-        if (bioOverlay && bioCloseBtn) {
-            bioOpenBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
+        // Event Delegation for Opening
+        document.addEventListener('click', (e) => {
+            // Bio
+            const bioBtn = e.target.closest('.btn-open-bio');
+            if (bioBtn) {
+                e.preventDefault();
+                if (bioOverlay) {
                     bioOverlay.classList.add('active');
                     lockScroll(true);
-                });
-            });
-            bioCloseBtn.addEventListener('click', () => {
-                bioOverlay.classList.remove('active');
-                lockScroll(false);
-            });
-        }
+                }
+                return;
+            }
 
-        // Contact Events
-        if (contactOverlay && contactCloseBtn) {
-            contactOpenBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
+            // Contact
+            const contactBtn = e.target.closest('.btn-open-contact');
+            if (contactBtn) {
+                e.preventDefault();
+                if (contactOverlay) {
                     contactOverlay.classList.add('active');
                     lockScroll(true);
+                    // Close others
                     if (bioOverlay) bioOverlay.classList.remove('active');
                     if (locationsOverlay) locationsOverlay.classList.remove('active');
-                });
-            });
-            contactCloseBtn.addEventListener('click', () => {
-                contactOverlay.classList.remove('active');
-                lockScroll(false);
-            });
-        }
+                    document.querySelectorAll('.portfolio-overlay').forEach(ov => ov.classList.remove('active'));
+                }
+                return;
+            }
 
-        // Locations Events
-        if (locationsOverlay && locationsCloseBtn) {
-            locationsOpenBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
+            // Portfolio triggers
+            const portfolioBtn = e.target.closest('.btn-open-portfolio');
+            if (portfolioBtn) {
+                e.preventDefault();
+                const targetId = portfolioBtn.getAttribute('data-target');
+                const targetOverlay = document.getElementById(targetId);
+                if (targetOverlay) {
+                    targetOverlay.classList.add('active');
+                    lockScroll(true);
+                }
+                return;
+            }
+
+            // Locations trigger (PAISES)
+            if (e.target.closest('.btn-open-locations')) {
+                e.preventDefault();
+                if (locationsOverlay) {
                     locationsOverlay.classList.add('active');
                     lockScroll(true);
-                });
-            });
-            locationsCloseBtn.addEventListener('click', () => {
-                locationsOverlay.classList.remove('active');
+                }
+                return;
+            }
+
+            // Global Close (Background click or Escape)
+            const targetOverlay = e.target.closest('.portfolio-overlay, .bio-overlay, .contact-overlay, .locations-overlay');
+            if (targetOverlay && (e.target === targetOverlay)) {
+                targetOverlay.classList.remove('active');
                 lockScroll(false);
-            });
-        }
+            }
+        });
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (bioOverlay) bioOverlay.classList.remove('active');
-                if (contactOverlay) contactOverlay.classList.remove('active');
-                if (locationsOverlay) locationsOverlay.classList.remove('active');
-                lockScroll(false);
+                const overlays = document.querySelectorAll('.portfolio-overlay, .bio-overlay, .contact-overlay, .locations-overlay');
+                let closedAny = false;
+                overlays.forEach(ov => {
+                    if (ov.classList.contains('active')) {
+                        ov.classList.remove('active');
+                        closedAny = true;
+                    }
+                });
+                if (closedAny) lockScroll(false);
             }
         });
     }
