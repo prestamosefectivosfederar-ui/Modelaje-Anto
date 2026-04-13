@@ -2436,36 +2436,174 @@ nav {
     bottom: 0;
     left: 0;
     width: 100%;
-    z-index: 6;
-    border-top: 1px solid rgba(237, 232, 222, 0.07);
-    padding: 12px 0;
+    z-index: 100;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px 0; /* Slightly more padding for larger text */
     overflow: hidden;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
     opacity: 0;
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hero-bottom-marquee:hover {
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(15px);
 }
 
 .hero-marquee-track {
     display: inline-flex;
     align-items: center;
-    gap: 2.2rem;
+    gap: 3.5rem; /* Increased gap for larger text */
     white-space: nowrap;
     animation: marqueeHero 32s linear infinite;
+    transition: animation-play-state 0.3s ease;
+}
+
+.hero-bottom-marquee:hover .hero-marquee-track {
+    animation-play-state: paused;
 }
 
 .hero-marquee-track span {
     font-family: 'Inter', sans-serif;
-    font-size: 0.48rem;
+    font-size: 0.72rem; /* Increased from 0.5rem */
     font-weight: 300;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: rgba(237, 232, 222, 0.22);
+    color: rgba(255, 255, 255, 0.2);
     flex-shrink: 0;
+    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: inline-block;
 }
 
-.hm-dot {
+.hero-bottom-marquee:hover .hero-marquee-track span {
+    color: rgba(255, 255, 255, 0.1); /* Elegantly dim all when container is hovered */
+}
+
+.hero-marquee-track span:not(.hm-dot):hover {
+    color: #ffffff !important;
+    transform: scale(1.08);
+    opacity: 1;
+}
+
+/* Subtle accent for dots */
+.hero-marquee-track .hm-dot {
     color: var(--accent-gold) !important;
-    font-size: 0.32rem !important;
-    letter-spacing: 0 !important;
-    opacity: 0.65;
+    opacity: 0.3;
+    transition: opacity 0.6s ease;
+}
+
+.hero-bottom-marquee:hover .hm-dot {
+    opacity: 0.1;
+}
+
+/* Locations Overlay */
+.locations-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(25px);
+    z-index: 30000;
+    transform: translateY(100%);
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 4vw;
+}
+
+.locations-overlay.active {
+    transform: translateY(0);
+}
+
+.locations-container {
+    max-width: 1200px;
+    width: 100%;
+}
+
+.locations-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.locations-title {
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+}
+
+.locations-title .outline {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+}
+
+.location-card {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.4s ease;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.location-card span {
+    font-family: monospace;
+    font-size: 0.6rem;
+    opacity: 0.3;
+}
+
+.location-card:hover {
+    color: #ffffff;
+    border-bottom-color: var(--accent-gold);
+    padding-left: 10px;
+}
+
+.btn-close-locations {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    background: white;
+    color: black;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 30005;
+    transition: transform 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-close-locations:hover {
+    transform: rotate(90deg) scale(1.1);
+}
+
+.btn-open-locations {
+    cursor: pointer !important;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(255,255,255,0.2);
+}
+
+.btn-open-locations:hover {
+    text-decoration-color: var(--accent-gold);
 }

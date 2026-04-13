@@ -306,7 +306,6 @@ class AntonellaApp {
             this.tryInitStatsParticles();
             this.initFilmGrain();
             this.initOverlays();
-            new HorizontalGallery();
             MagneticElement.applyAll();
         }, 100);
     }
@@ -592,6 +591,10 @@ class AntonellaApp {
         const contactOpenBtns = document.querySelectorAll('.btn-open-contact');
         const contactCloseBtn = document.querySelector('.btn-close-contact');
 
+        const locationsOverlay = document.querySelector('.locations-overlay');
+        const locationsOpenBtns = document.querySelectorAll('.btn-open-locations');
+        const locationsCloseBtn = document.querySelector('.btn-close-locations');
+
         const lockScroll = (lock) => {
             document.body.style.overflow = lock ? 'hidden' : '';
         };
@@ -618,8 +621,8 @@ class AntonellaApp {
                     e.preventDefault();
                     contactOverlay.classList.add('active');
                     lockScroll(true);
-                    // If opening contact from bio, maybe close bio?
                     if (bioOverlay) bioOverlay.classList.remove('active');
+                    if (locationsOverlay) locationsOverlay.classList.remove('active');
                 });
             });
             contactCloseBtn.addEventListener('click', () => {
@@ -628,10 +631,26 @@ class AntonellaApp {
             });
         }
 
+        // Locations Events
+        if (locationsOverlay && locationsCloseBtn) {
+            locationsOpenBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    locationsOverlay.classList.add('active');
+                    lockScroll(true);
+                });
+            });
+            locationsCloseBtn.addEventListener('click', () => {
+                locationsOverlay.classList.remove('active');
+                lockScroll(false);
+            });
+        }
+
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 if (bioOverlay) bioOverlay.classList.remove('active');
                 if (contactOverlay) contactOverlay.classList.remove('active');
+                if (locationsOverlay) locationsOverlay.classList.remove('active');
                 lockScroll(false);
             }
         });
