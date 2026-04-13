@@ -306,6 +306,7 @@ class AntonellaApp {
             this.tryInitStatsParticles();
             this.initFilmGrain();
             this.initOverlays();
+            this.initInteractiveMarquee();
             MagneticElement.applyAll();
         }, 100);
     }
@@ -654,6 +655,42 @@ class AntonellaApp {
                 lockScroll(false);
             }
         });
+    }
+
+    initInteractiveMarquee() {
+        const track = document.querySelector('.hero-marquee-track');
+        if (!track) return;
+
+        // Clone for infinity - 3 sets for safety
+        const items = Array.from(track.children);
+        items.forEach(item => track.appendChild(item.cloneNode(true)));
+        items.forEach(item => track.appendChild(item.cloneNode(true)));
+
+        let x = 0;
+        let baseSpeed = 0.5;
+        let mouseSpeed = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            const centerX = window.innerWidth / 2;
+            // Influence: farther from center = more speed influence
+            const influence = (e.clientX - centerX) / (window.innerWidth / 2);
+            mouseSpeed = influence * 15; // Max additional speed
+        });
+
+        const update = () => {
+            // Combine base speed and mouse SPEED influence
+            // This way it always moves, but mouse can accelerate or reverse it
+            x -= (baseSpeed + mouseSpeed);
+
+            const trackWidth = track.scrollWidth / 3;
+            if (x <= -trackWidth) x += trackWidth;
+            if (x > 0) x -= trackWidth;
+
+            track.style.transform = `translateX(${x}px)`;
+            requestAnimationFrame(update);
+        };
+
+        update();
     }
 }
 

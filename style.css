@@ -2454,10 +2454,11 @@ nav {
 .hero-marquee-track {
     display: inline-flex;
     align-items: center;
-    gap: 3.5rem; /* Increased gap for larger text */
+    gap: 15vw; /* Use viewport width for spacing to ensure it scales and overflows */
     white-space: nowrap;
-    animation: marqueeHero 32s linear infinite;
+    /* animation: marqueeHero 32s linear infinite; -- REMOVED */
     transition: animation-play-state 0.3s ease;
+    padding: 0 10vw;
 }
 
 .hero-bottom-marquee:hover .hero-marquee-track {
