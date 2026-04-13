@@ -35,10 +35,9 @@
         
         <header>
             <nav>
-                <div class="nav-item sound-toggle">
-                    <div class="sound-bars">
-                        <span></span><span></span><span></span><span></span>
-                    </div>
+                <div class="nav-cta-wrap">
+                    <button class="btn-hero-cta btn-open-bio">BIO</button>
+                    <button class="btn-hero-cta btn-open-contact">CONTACTO</button>
                 </div>
             </nav>
         </header>
@@ -56,61 +55,19 @@
                 <!-- Entry reveal curtain (GSAP) -->
                 <div class="image-overlay-reveal"></div>
 
-
-                <!-- Bottom info bar -->
-                <div class="hero-bottom-bar">
-                    <div class="hero-cta-fixed">
-                        <button class="btn-hero-cta btn-open-bio">Portfolio</button>
-                    </div>
-                    <span class="hero-year-tag">SS&thinsp;2026</span>
-                </div>
-
-                <!-- Scroll indicator -->
-                <div class="hero-scroll-ind">
-                    <div class="hero-scroll-line"></div>
-                    <span>Scroll</span>
-                </div>
-
                 <!-- Bottom marquee -->
                 <div class="hero-bottom-marquee">
                     <div class="hero-marquee-track">
-                        <span class="btn-open-portfolio" data-target="overlay-content">Content</span><span class="hm-dot">◆</span>
-                        <span class="btn-open-portfolio" data-target="overlay-test">Test</span><span class="hm-dot">◆</span>
-                        <span class="btn-open-portfolio" data-target="overlay-work">Work</span><span class="hm-dot">◆</span>
-                        <span class="btn-open-portfolio" data-target="overlay-workout">Workout</span><span class="hm-dot">◆</span>
-                        <span class="btn-open-locations">PAISES</span><span class="hm-dot">◆</span>
-                        <span class="btn-open-portfolio" data-target="overlay-lifestyle">Lifestyle</span><span class="hm-dot">◆</span>
+                        <span class="btn-open-portfolio" data-target="overlay-content">Content</span>
+                        <span class="btn-open-portfolio" data-target="overlay-test">Test</span>
+                        <span class="btn-open-portfolio" data-target="overlay-work">Work</span>
+                        <span class="btn-open-portfolio" data-target="overlay-workout">Workout</span>
+                        <span class="btn-open-locations">PAISES</span>
+                        <span class="btn-open-portfolio" data-target="overlay-lifestyle">Lifestyle</span>
                     </div>
                 </div>
 
             </section>
-
-
-
-
-
-
-            <!-- REPLACEMENT: Move to Hero -->
-
-            <!-- Portfolio content moved to Interactive Overlays -->
-
-            <section class="contact-trigger-section">
-                <div class="trigger-content">
-                    <span class="section-tag">/ DISPONIBILIDAD</span>
-                    <h2 class="trigger-title">¿LISTA PARA LA <br> <span class="outline">PRÓXIMA CAMPAÑA?</span></h2>
-                    <button class="btn-open-contact btn-premium btn-cta-main">Contrataciones & Consultas</button>
-                </div>
-            </section>
-
-            <footer class="main-footer">
-                <div class="footer-bottom">
-                    <p>&copy; 2026 ANTONELLA DIMENZA.</p>
-                    <div class="footer-links">
-                        <span>POLÍTICA DE PRIVACIDAD</span>
-                        <span>LEGAL</span>
-                    </div>
-                </div>
-            </footer>
         </main>
     </div>
 
@@ -225,6 +182,44 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+    </div>
+
+    <!-- Locations Overlay -->
+    <div class="locations-overlay" id="locations-overlay" data-lenis-prevent>
+        <div class="locations-content">
+            <header class="locations-header">
+                <h2 class="locations-title">PAISES <br> <span class="outline">VISITADOS</span></h2>
+            </header>
+            <div class="locations-grid">
+                <div class="location-card"><span>01</span> EGIPTO</div>
+                <div class="location-card"><span>02</span> GRECIA</div>
+                <div class="location-card"><span>03</span> GUATEMALA</div>
+                <div class="location-card"><span>04</span> LONDRES</div>
+                <div class="location-card"><span>05</span> PARÍS</div>
+                <div class="location-card"><span>06</span> CÔTE D'AZUR</div>
+                <div class="location-card"><span>07</span> RIVIERA</div>
+                <div class="location-card"><span>08</span> MEXICO</div>
+                <div class="location-card"><span>09</span> ABU DABI</div>
+                <div class="location-card"><span>10</span> DUBAI</div>
+                <div class="location-card"><span>11</span> INDIA</div>
+                <div class="location-card"><span>12</span> NORUEGA</div>
+                <div class="location-card"><span>13</span> ESPAÑA</div>
+                <div class="location-card"><span>14</span> ITALIA</div>
+                <div class="location-card"><span>15</span> SUIZA</div>
+                <div class="location-card"><span>16</span> COLOMBIA</div>
+                <div class="location-card"><span>17</span> PERÚ</div>
+                <div class="location-card"><span>18</span> NEW YORK</div>
+                <div class="location-card"><span>19</span> MILAN</div>
+                <div class="location-card"><span>20</span> TOKYO</div>
+                <div class="location-card"><span>21</span> BARCELONA</div>
+                <div class="location-card"><span>22</span> IBIZA</div>
+                <div class="location-card"><span>23</span> TURQUÍA</div>
+                <div class="location-card"><span>24</span> VIETNAM</div>
+                <div class="location-card"><span>25</span> BALI</div>
+                <div class="location-card"><span>26</span> MIAMI</div>
+            </div>
         </div>
     </div>
 
@@ -365,6 +360,43 @@
     </div>
 
     <div class="cursor"></div>
-    <script type="module" src="/main.js"></script>
+    
+    <!-- Inline robust event handler to guarantee button functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Core events inlined');
+            const lock = (on) => document.body.style.overflow = on ? 'hidden' : '';
+            
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('button, .btn-open-bio, .btn-open-contact, .btn-open-portfolio, .btn-open-locations');
+                if (!btn) return;
+                
+                const cls = btn.classList;
+                if (cls.contains('btn-open-bio')) {
+                    document.querySelector('.bio-overlay')?.classList.add('active');
+                    lock(true);
+                } else if (cls.contains('btn-open-contact')) {
+                    document.querySelector('.contact-overlay')?.classList.add('active');
+                    lock(true);
+                } else if (cls.contains('btn-open-portfolio')) {
+                    const tid = btn.getAttribute('data-target');
+                    document.getElementById(tid)?.classList.add('active');
+                    lock(true);
+                } else if (cls.contains('btn-open-locations')) {
+                    document.querySelector('.locations-overlay')?.classList.add('active');
+                    lock(true);
+                }
+            });
+            
+            // Close buttons
+            document.querySelectorAll('.btn-close-bio, .btn-close-contact, .btn-close-locations, .btn-close-overlay').forEach(b => {
+                b.addEventListener('click', () => {
+                    document.querySelectorAll('.bio-overlay, .contact-overlay, .locations-overlay, .portfolio-overlay').forEach(ov => ov.classList.remove('active'));
+                    lock(false);
+                });
+            });
+        });
+    </script>
+    <script src="main.js"></script>
 </body>
 </html>

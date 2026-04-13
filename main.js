@@ -295,19 +295,21 @@ class AntonellaApp {
         
         // Use a small delay to ensure CDNs are parsed
         setTimeout(() => {
-            // Partículas Three.js en el hero
-            if (typeof THREE !== 'undefined') {
-                const heroSection = document.querySelector('.hero');
-                if (heroSection) this.fluidParticles = new FluidParticles(heroSection);
-            }
-            this.tryInitLenis();
-            this.initGSAP();
-            this.initInteractive();
-            this.tryInitStatsParticles();
-            this.initFilmGrain();
-            this.initOverlays();
-            this.initInteractiveMarquee();
-            MagneticElement.applyAll();
+            try {
+                if (typeof THREE !== 'undefined') {
+                    const heroSection = document.querySelector('.hero');
+                    if (heroSection) this.fluidParticles = new FluidParticles(heroSection);
+                }
+            } catch(e) { console.warn('Particles failed'); }
+
+            try { this.tryInitLenis(); } catch(e) {}
+            try { this.initGSAP(); } catch(e) {}
+            try { this.initInteractive(); } catch(e) {}
+            try { this.tryInitStatsParticles(); } catch(e) {}
+            try { this.initFilmGrain(); } catch(e) {}
+            try { this.initOverlays(); } catch(e) {}
+            try { this.initInteractiveMarquee(); } catch(e) {}
+            try { MagneticElement.applyAll(); } catch(e) {}
         }, 100);
     }
 
@@ -448,33 +450,21 @@ class AntonellaApp {
             0
         );
 
-        // 2. "Antonella" — clips up from bottom of its own overflow
-        tl.fromTo('.hero-name-top',
-            { y: '105%' },
-            { y: '0%', duration: 1.6, ease: 'expo.out' },
-            0.6
+        // 1. Reveal curtain slide up
+        tl.to('.image-overlay-reveal', {
+            scaleY: 0,
+            duration: 1.4,
+            ease: 'expo.inOut'
+        }, 0.2);
+
+        // 2. Head Nav Reveal
+        tl.fromTo('header',
+            { opacity: 0, y: -20 },
+            { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' },
+            0.8
         );
 
-        // 3. "Dimenza" — clips up with slight delay
-        tl.fromTo('.hero-name-bottom',
-            { y: '105%' },
-            { y: '0%', duration: 1.6, ease: 'expo.out' },
-            0.78
-        );
-
-        // 4. Bottom bar (specs + CTA + year)
-        tl.fromTo('.hero-bottom-bar',
-            { opacity: 0, y: 14 },
-            { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' },
-            1.6
-        );
-
-        // 5. Scroll indicator
-        tl.fromTo('.hero-scroll-ind',
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' },
-            1.8
-        );
+        // Bottom bar and scroll indicator animations removed as elements were deleted
 
         // 6. Marquee strip
         tl.fromTo('.hero-bottom-marquee',

@@ -44,13 +44,10 @@
   transition: width 0.4s ease;
 }
 
-body.loading #app {
-  opacity: 0;
-}
-
-body:not(.loading) #app {
+/* Removed loading protection to guarantee immediate interactivity */
+#app {
   opacity: 1;
-  transition: opacity 1s ease 0.5s;
+  pointer-events: auto;
 }
 
 #loader.loaded {
@@ -65,6 +62,7 @@ body:not(.loading) #app {
   --glass: rgba(255, 255, 255, 0.03);
   --border-glass: rgba(255, 255, 255, 0.1);
   --accent-gold: #c8a96e;
+  --p-yellow: #c8a96e;
 }
 
 /* BACKGROUND ILLUMINATION */
@@ -168,29 +166,7 @@ nav {
   gap: 40px;
 }
 
-.sound-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 15px;
-}
-
-.sound-bars span {
-  width: 2px;
-  background: var(--text-color);
-  border-radius: 2px;
-  animation: sound-wave 1s ease-in-out infinite alternate;
-}
-
-.sound-bars span:nth-child(1) { height: 100%; animation-delay: 0.1s; }
-.sound-bars span:nth-child(2) { height: 60%; animation-delay: 0.3s; }
-.sound-bars span:nth-child(3) { height: 80%; animation-delay: 0.2s; }
-.sound-bars span:nth-child(4) { height: 40%; animation-delay: 0.4s; }
-
-@keyframes sound-wave {
-  0% { transform: scaleY(0.4); }
-  100% { transform: scaleY(1); }
-}
+/* Removed sound bars as per user request */
 
 .btn-talk {
   text-decoration: none;
@@ -369,28 +345,7 @@ nav {
   opacity: 0;
 }
 
-.btn-hero-cta {
-  opacity: 0;
-}
-
-.btn-open-bio {
-  background: white;
-  color: black;
-  border: none;
-  padding: 15px 35px;
-  border-radius: 50px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 30px rgba(255,255,255,0.1);
-}
-
-.btn-open-bio:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 15px 40px rgba(255,255,255,0.2);
-}
+/* Consolidating button styles further down */
 
 .scroll-indicator {
   position: absolute;
@@ -1367,17 +1322,21 @@ nav {
   background: #000;
   z-index: 20000;
   transform: translateX(100%);
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   padding: 80px 6vw 120px;
   overscroll-behavior: contain;
   cursor: default;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .bio-overlay.active,
 .contact-overlay.active {
   transform: translateX(0);
+  pointer-events: auto;
+  visibility: visible;
 }
 
 .btn-close-bio,
@@ -1684,8 +1643,9 @@ nav {
 
 /* Footer Bottom */
 .main-footer {
-  margin-top: 100px;
-  padding-top: 40px;
+  margin-top: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
   border-top: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -2304,6 +2264,7 @@ nav {
     margin: 0;
     will-change: transform;
     overflow: hidden;
+    opacity: 1; /* Force visibility */
 }
 
 /* Antonella — top left */
@@ -2328,7 +2289,7 @@ nav {
     align-items: center;
     justify-content: space-between;
     padding: 0 4vw;
-    opacity: 0;
+    opacity: 1; /* Force visibility */
 }
 
 .hero-specs {
@@ -2361,18 +2322,33 @@ nav {
     letter-spacing: 0.15em;
 }
 
-/* ── CTA — sits inside bottom bar ─────────────────── */
+/* ── Top Right Navigation ────────────────────────── */
+.nav-cta-wrap {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+}
+
+.nav-cta-wrap .btn-hero-cta {
+    width: 160px; /* Reliable size for top right */
+    height: 44px;
+    font-size: 0.55rem;
+}
+
+/* ── CTA — resides in bottom bar? No, we moved it ─── */
 .hero-cta-fixed {
-    position: static;
-    transform: none;
-    opacity: 1;
+    display: none; /* Clean up if still referenced */
 }
 
 .btn-hero-cta {
     background: transparent;
     color: #EDE8DE;
     border: 1px solid rgba(237, 232, 222, 0.28);
-    padding: 13px 40px;
+    width: 200px; /* Same size for both */
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-family: 'Inter', sans-serif;
     font-size: 0.58rem;
     font-weight: 300;
@@ -2409,7 +2385,7 @@ nav {
     align-items: center;
     gap: 10px;
     z-index: 6;
-    opacity: 0;
+    opacity: 1; /* Force visibility */
 }
 
 .hero-scroll-line {
@@ -2438,11 +2414,11 @@ nav {
     width: 100%;
     z-index: 100;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 20px 0; /* Slightly more padding for larger text */
+    padding: 12px 0; /* Tighter fit */
     overflow: hidden;
     background: rgba(0,0,0,0.6);
     backdrop-filter: blur(8px);
-    opacity: 0;
+    opacity: 1; /* Force visibility */
     transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -2462,71 +2438,46 @@ nav {
 
 .hero-marquee-track span {
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 300;
     text-transform: uppercase;
-    letter-spacing: 0.4em;
-    color: rgba(255, 255, 255, 0.45); /* Increased for better visibility */
+    letter-spacing: 0.35em;
+    color: rgba(255, 255, 255, 0.45);
     cursor: pointer;
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.4s ease;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     position: relative;
-    padding: 0.5rem 0;
+    padding: 0.6rem 2.5rem; /* Increased padding for the fill effect */
+    overflow: hidden;
+    z-index: 1;
 }
 
-/* Puntito amarillo que titila */
+/* Premium fill effect similar to buttons */
 .hero-marquee-track span::before {
     content: '';
-    width: 6px;
-    height: 6px;
-    background: #FFD700; /* Yellow/Gold */
-    border-radius: 50%;
-    margin-right: 1.2rem;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    box-shadow: 0 0 10px #FFD700;
-}
-
-/* Animación de titileo */
-@keyframes blinkYellow {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-}
-
-.hero-marquee-track span:hover::before {
-    opacity: 1;
-    animation: blinkYellow 1s infinite ease-in-out;
-}
-
-/* Subrayado amarillo */
-.hero-marquee-track span::after {
-    content: '';
     position: absolute;
-    bottom: 0;
-    left: 2rem; /* Give space for the dot */
-    right: 0;
-    height: 1px;
-    background: #FFD700;
+    inset: 0;
+    background: var(--accent-gold);
     transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: right;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: -1;
 }
 
 .hero-marquee-track span:hover {
-    color: #ffffff;
+    color: #000;
 }
 
-.hero-marquee-track span:hover::after {
+.hero-marquee-track span:hover::before {
     transform: scaleX(1);
+    transform-origin: left;
 }
 
-.hm-dot {
-    font-size: 0.6rem;
-    color: rgba(255,255,255,0.25); /* More visible dot */
-    pointer-events: none;
-    margin: 0 1rem;
-}
+/* Removed old dot and underline styles handled here */
+
+/* Separator dots removed */
 
 .hero-marquee-track span.btn-open-locations {
     text-decoration: none;
@@ -2540,35 +2491,47 @@ nav {
     height: 100%;
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    opacity: 0;
+    visibility: hidden;
     z-index: 30000;
-    transform: translateY(100%);
-    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 60px 4vw;
+    padding: 6rem 2rem;
 }
 
 .locations-overlay.active {
-    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
 }
 
-.locations-container {
-    max-width: 1200px;
+.locations-content {
     width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding-right: 1.5rem;
 }
+
+.locations-content::-webkit-scrollbar { display: none; }
 
 .locations-header {
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 5rem;
 }
 
 .locations-title {
-    font-size: clamp(3rem, 10vw, 8rem);
-    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 200;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    color: #fff;
+    margin-top: 1.5rem;
     text-transform: uppercase;
-    line-height: 0.85;
-    letter-spacing: -0.05em;
 }
 
 .locations-title .outline {
@@ -2578,35 +2541,45 @@ nav {
 
 .locations-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding-bottom: 5rem;
 }
 
 .location-card {
-    padding: 20px;
+    padding: 2.5rem 2rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-    transition: all 0.4s ease;
-    cursor: default;
+    background: rgba(255, 255, 255, 0.02);
     display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.location-card span {
-    font-family: monospace;
-    font-size: 0.6rem;
-    opacity: 0.3;
+    flex-direction: column;
+    gap: 0.8rem;
+    transition: all 0.5s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
 }
 
 .location-card:hover {
-    color: #ffffff;
-    border-bottom-color: var(--accent-gold);
-    padding-left: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom-color: var(--p-yellow);
+}
+
+.location-card span {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--p-yellow);
+    letter-spacing: 0.2em;
+    opacity: 0.8;
+}
+
+.location-card {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
 }
 
 .btn-close-locations {
@@ -2663,7 +2636,6 @@ nav {
     opacity: 1;
     pointer-events: all;
 }
-
 .portfolio-overlay .overlay-container {
     max-width: var(--max-width);
     margin: 0 auto;
@@ -2693,4 +2665,13 @@ nav {
     margin-bottom: 5rem;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     padding-bottom: 2rem;
+}
+
+/* Ensure all overlays remain scrollable internally and interactive when active */
+.contact-overlay.active, 
+.bio-overlay.active, 
+.locations-overlay.active, 
+.portfolio-overlay.active {
+    pointer-events: auto !important;
+    visibility: visible !important;
 }
