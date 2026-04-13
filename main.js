@@ -661,27 +661,59 @@ class AntonellaApp {
         const track = document.querySelector('.hero-marquee-track');
         if (!track) return;
 
-        // Clone for infinity - 3 sets for safety
+        // Clone items for seamless loop
         const items = Array.from(track.children);
-        items.forEach(item => track.appendChild(item.cloneNode(true)));
-        items.forEach(item => track.appendChild(item.cloneNode(true)));
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
+        
+        // Add one more set to ensure full coverage during fast scrolling
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
 
         let x = 0;
-        let baseSpeed = 0.5;
-        let mouseSpeed = 0;
+        let speed = 0.5; // Base speed
+        let mouseInfluence = 0;
+        let isHovered = false;
+
+        const marqueeContainer = document.querySelector('.hero-bottom-marquee');
+        if (!marqueeContainer) return;
+
+        marqueeContainer.addEventListener('mouseenter', () => {
+            isHovered = true;
+        });
+        marqueeContainer.addEventListener('mouseleave', () => {
+            isHovered = false;
+            mouseInfluence = 0;
+        });
 
         window.addEventListener('mousemove', (e) => {
+            if (!isHovered) return;
             const centerX = window.innerWidth / 2;
-            // Influence: farther from center = more speed influence
-            const influence = (e.clientX - centerX) / (window.innerWidth / 2);
-            mouseSpeed = influence * 15; // Max additional speed
+            // Influence based on distance from center
+            mouseInfluence = (e.clientX - centerX) / (window.innerWidth / 2);
         });
 
         const update = () => {
-            // Combine base speed and mouse SPEED influence
-            // This way it always moves, but mouse can accelerate or reverse it
-            x -= (baseSpeed + mouseSpeed);
+            // Target speed is influenced by mouse
+            let targetInfluence = isHovered ? mouseInfluence * 6 : 0;
+            
+            // Base speed: only active when NOT hovered
+            let currentBaseSpeed = isHovered ? 0 : speed;
 
+            // Dead zone logic: wider dead zone for easier stopping
+            if (isHovered && Math.abs(mouseInfluence) < 0.25) {
+                targetInfluence = 0;
+            }
+
+            const totalSpeed = currentBaseSpeed + targetInfluence;
+            
+            x -= totalSpeed;
+
+            // Loop logic: track has 3 sets. Reset when first set passed.
             const trackWidth = track.scrollWidth / 3;
             if (x <= -trackWidth) x += trackWidth;
             if (x > 0) x -= trackWidth;
